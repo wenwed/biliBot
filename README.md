@@ -1,4 +1,4 @@
-# wenwd
+# biliBot
 bilibili直播动态提醒bot
 此bot可以对B站UP主进行订阅，订阅后会在订阅的群聊或私人对话中提醒你关注的UP主的最新动态和开播提醒
 使用的是酷qHTTP，下载地址：https://cqp.cc/t/30748
