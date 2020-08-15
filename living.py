@@ -16,12 +16,19 @@ def liveRoom():
     rooms = {}
     conn = sqlite3.connect('robot.db', 30.0)
     c = conn.cursor()
-    for row in c.execute("SELECT AID,Live_Start_Time FROM UP"):
+    for row in c.execute("SELECT AID,Live_Start_Time FROM UP,subGroup WHERE subGroup.UID=UP.UID AND subGroup.Sub_Type=1"):
+        rooms[row[0]] = row[1]
+    for row in c.execute("SELECT AID,Live_Start_Time FROM UP,subGroup WHERE subGroup.UID=UP.UID AND subGroup.Sub_Type=3"):
+        rooms[row[0]] = row[1]
+    for row in c.execute("SELECT AID,Live_Start_Time FROM UP,subPerson WHERE subPerson.UID=UP.UID AND subPerson.Sub_Type=1"):
+        rooms[row[0]] = row[1]
+    for row in c.execute("SELECT AID,Live_Start_Time FROM UP,subPerson WHERE subPerson.UID=UP.UID AND subPerson.Sub_Type=3"):
         rooms[row[0]] = row[1]
     conn.commit()
     conn.close()
     for roomID,startTime in rooms.items():
         living(roomID,startTime)
+        time.sleep(2)
 
 def living(roomID, startTime):
     url = "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id={}".format(roomID)
@@ -49,6 +56,7 @@ def living(roomID, startTime):
     else:
         return ''
 
+#发送群直播通知
 def handleGroupLiving(info,groupID):
     try:
         room = info["room_info"]
@@ -65,6 +73,7 @@ def handleGroupLiving(info,groupID):
         print(e)
         return e
 
+#发送个人直播通知
 def handlePersonLiving(info,personID):
     try:
         room = info["room_info"]
@@ -86,13 +95,21 @@ def userDynamic():
     user = {}
     conn = sqlite3.connect('robot.db', 30.0)
     c = conn.cursor()
-    for row in c.execute("SELECT UID,Last_Notice_Time FROM UP"):
+    for row in c.execute("SELECT UP.UID,Last_Notice_Time FROM UP,subGroup WHERE subGroup.UID=UP.UID AND subGroup.Sub_Type=2"):
+        user[row[0]] = row[1]
+    for row in c.execute("SELECT UP.UID,Last_Notice_Time FROM UP,subGroup WHERE subGroup.UID=UP.UID AND subGroup.Sub_Type=3"):
+        user[row[0]] = row[1]
+    for row in c.execute("SELECT UP.UID,Last_Notice_Time FROM UP,subPerson WHERE subPerson.UID=UP.UID AND subPerson.Sub_Type=2"):
+        user[row[0]] = row[1]
+    for row in c.execute("SELECT UP.UID,Last_Notice_Time FROM UP,subPerson WHERE subPerson.UID=UP.UID AND subPerson.Sub_Type=3"):
         user[row[0]] = row[1]
     conn.commit()
     conn.close()
     for uid,noticeTime in user.items():
         dynamic(uid,noticeTime)
+        time.sleep(2)
 
+#查看单个UP是否更新动态
 def dynamic(uid,noticeTime):
     url = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid={}".format(uid)
     res = requests.get(url,headers)
@@ -126,10 +143,10 @@ def dynamic(uid,noticeTime):
             else:
                 break
         except Exception as e:
-            print(e,end='')
             break
     return ''
 
+#发送群动态通知
 def handleGroupDynamic(message,group):
     data = {
         'group_id': group,
@@ -140,6 +157,7 @@ def handleGroupDynamic(message,group):
     res = requests.post(group_send_url, data=data)
     return res
 
+#发送个人动态通知
 def handlePersonDynamic(message,person):
     data = {
         'user_id': person,
