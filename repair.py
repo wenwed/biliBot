@@ -11,11 +11,15 @@ bot_server = Flask(__name__)
 
 def handle(data):
     try:
+        #只处理文字信息
+        type = data['messageChain'][1]['type']      #种类
+        if(type != 'Plain'):
+            return 0
         #信息来源于群聊
-        if data['message_type']=='group':
-            message = data['raw_message']       #信息
-            group = data['group_id']            #群号
-            role = data['sender']['role']       #信息来源的角色
+        if data['type']=='GroupMessage':
+            message = data['messageChain'][1]['text']     #信息
+            group = data['sender']['group']['id']           #群号
+            role = data['sender']['permission']       #信息来源的角色
             if(message.find('!')==0):
                 if(message=='!help'):
                     res = "!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表\n"
@@ -72,7 +76,7 @@ def handle(data):
                         res = "格式错误"
                     sentGroupMessage(group, res)
                     return 0
-                elif(message.find('!添加精确关键词')==0 and (role=='admin' or role=='owner')):
+                elif(message.find('!添加精确关键词')==0 and (role=='ADMINISTRATOR' or role=='OWNER')):
                     message = re.sub(r'!添加精确关键词', '', message)
                     message = message.strip()
                     message = message.split(" ",maxsplit=1)
@@ -82,7 +86,7 @@ def handle(data):
                         res = "格式错误"
                     sentGroupMessage(group, res)
                     return 0
-                elif(message.find('!添加模糊关键词')==0 and (role=='admin' or role=='owner')):
+                elif(message.find('!添加模糊关键词')==0 and (role=='ADMINISTRATOR' or role=='OWNER')):
                     message = re.sub(r'!添加模糊关键词', '', message)
                     message = message.strip()
                     message = message.split(" ",maxsplit=1)
@@ -92,7 +96,7 @@ def handle(data):
                         res = "格式错误"
                     sentGroupMessage(group, res)
                     return 0
-                elif(message.find('!删除关键词')==0 and (role=='admin' or role=='owner')):
+                elif(message.find('!删除关键词')==0 and (role=='ADMINISTRATOR' or role=='OWNER')):
                     message = re.sub(r'!删除关键词', '', message)
                     message = message.strip()
                     if(message!=None):
@@ -101,11 +105,11 @@ def handle(data):
                         res = "格式错误"
                     sentGroupMessage(group, res)
                     return 0
-                elif(message=='!精确关键词列表' and (role=='admin' or role=='owner')):
+                elif(message=='!精确关键词列表' and (role=='ADMINISTRATOR' or role=='OWNER')):
                     res = initDatabase.selectKeyWord(group, 1)
                     sentGroupMessage(group, res)
                     return 0
-                elif(message=='!模糊关键词列表' and (role=='admin' or role=='owner')):
+                elif(message=='!模糊关键词列表' and (role=='ADMINISTRATOR' or role=='OWNER')):
                     res = initDatabase.selectKeyWord(group, 2)
                     sentGroupMessage(group, res)
                     return 0
@@ -164,8 +168,8 @@ def handle(data):
                 return 0
         #信息来源于私聊           
         else:
-            message = data['raw_message']
-            user = data['user_id']
+            message = data['messageChain'][1]['text']
+            user = data['sender']['id'] 
             if(message.find('!')==0):
                 if(message=='!help'):
                     res = "!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表\n"
@@ -243,21 +247,28 @@ def handle(data):
 #发送群聊信息
 def sentGroupMessage(group, message):
     data = {
-        'group_id': group,
-        "message": message,
-        "auto_escape": False}
-    group_send_url = "http://127.0.0.1:5700/send_group_msg"
+        "sessionKey": "session",
+        'target': group,
+        "messageChain": [
+            { "type": "Plain", "text": message }
+        ]
+    }
+    group_send_url = "http://127.0.0.1:5700/sendGroupMessage"
 
     res = requests.post(group_send_url, data=data)
     return res
+
 #发送私聊信息
 def sentPersonMessage(person, message):
     data = {
-        'user_id': person,
-        "message": message,
-        "auto_escape": False}
+        "sessionKey": session,
+        "target": person,
+        "messageChain": [
+            { "type": "Plain", "text": message }
+        ]
+    }
                     
-    private_send_url = "http://127.0.0.1:5700/send_private_msg"
+    private_send_url = "http://127.0.0.1:5700/sendFriendMessage"
 
     res = requests.post(private_send_url, data=data)
     return res
@@ -275,6 +286,27 @@ def read_config():
         masterNum = config["master_num"]
         botNum = config["bot_num"]
 
+    #获取session
+    global session
+    data1 = {
+        "authKey": "123456789"
+    }
+    url = "http://127.0.0.1:5700/auth"
+    res = requests.post(url, data=data1)
+    res = res.text
+    print(res)
+    session = res["session"]
+    print(session)
+
+    #激活session
+    data = {
+        "sessionKey": session,
+        "qq": 1909239542
+    }
+    url = "http://127.0.0.1:5700/verify"
+    res = requests.post(url, data=data)
+    print(res.text)
+
 @bot_server.route('/api/message',methods=['POST'])
 
 
@@ -282,9 +314,10 @@ def server():
     read_config()
     data = request.get_data().decode('utf-8')
     data = loads(data)
+    print(data)
     handle(data)
     return ''
 
 if __name__ == '__main__':
     initDatabase.init()
-    bot_server.run(host='0.0.0.0',port=5701)
+    bot_server.run(host='127.0.0.1',port=5701)
