@@ -1,5 +1,6 @@
 const Mirai = require('node-mirai-sdk');
 const { Plain, At } = Mirai.MessageComponent;
+const sql = require('./scripts/sql.js');
 
 /**
 * 服务端设置(*)
