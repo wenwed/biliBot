@@ -51,7 +51,7 @@ let keyWords = `CREATE TABLE IF NOT EXISTS keyWords
     Key_Type INTEGER NOT NULL,
     PRIMARY KEY(Key_Word,Group_Number));`;
 
-//创建表
+// 创建表
 let createTable = (sql) => {
     return query(sql, []);
 };
@@ -61,15 +61,58 @@ createTable(subGroup);
 createTable(subPerson);
 createTable(keyWords);
 
-//关键词模块
-//给某个群添加关键词
-exports.addGroupKeyWords = (values) => {
+// 关键词模块
+// 给某个群添加关键词
+exports.addKeyWords = (values) => {
     let _sql = `INSERT INTO keyWords (Group_Number,Key_Word,Repair_Word,Key_Type) VALUES (?,?,?,?)`;
     return query(_sql, values);
 }
 
-//查询一个群全部的精确或模糊关键词
-exports.selectGroupKeyWords = (values) => {
-    let _sql = "SELECT Key_Word,Repair_Word FROM keyWords WHERE Group_Number=? AND Key_Type=?;";
+// 查询某个群是否有某个关键词
+exports.selectExistKeyWords = (values) => {
+    let _sql = "SELECT * FROM keyWords WHERE Group_Number=? AND Key_Word=?;";
+    return query(_sql, values);
+}
+
+// 更新某个群的某个关键词的类型
+exports.updateKeyWords = (values) => {
+    let _sql = "UPDATE keyWords SET Key_Type=? WHERE Group_Number=? AND Key_Word=?;";
+    return query(_sql, values);
+}
+
+// 查询一个群全部的精确或模糊关键词
+exports.selectKeyWords = (values) => {
+    let _sql = "SELECT Key_Word, Repair_Word FROM keyWords WHERE Group_Number=? AND Key_Type=?;";
+    return query(_sql, values);
+}
+
+// 删除某个群的某个关键词
+exports.deleteKeyWords = (values) => {
+    let _sql = "DELETE FROM keyWords WHERE Group_Number=? AND Key_Word=?;";
+    return query(_sql, values);
+}
+
+// UP模块
+// 添加一个UP主
+exports.addUP = (values) => {
+    let _sql = "INSERT INTO UP (UID,Name,AID,Live_Status,Live_Start_Time,Last_Notice_Time) VALUES (?,?,?,?,?,?);";
+    return query(_sql, values);
+}
+
+// 根据ID查询某个UP主的信息
+exports.selectUPByID = (values) => {
+    let _sql = "SELECT * FROM UP WHERE UID=?;";
+    return query(_sql, values);
+}
+
+// 根据ID修改某个UP主的信息
+exports.updateUPByID = (values) => {
+    let _sql = `UPDATE UP SET Key_Type=?,Name=?,AID=?,Live_Status=?,Live_Start_Time=?,Last_Notice_Time=? WHERE UID=?;`;
+    return query(_sql, values);
+}
+
+//删除某个UP主
+exports.deleteUP = (values) => {
+    let _sql = "DELETE FROM UP WHERE UID=?;";
     return query(_sql, values);
 }
