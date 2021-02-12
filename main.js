@@ -34,6 +34,26 @@ bot.onSignal('verified', async () => {
 // 接受消息,发送消息(*)
 bot.onMessage(async message => {
     const { type, sender, messageChain, reply, quoteReply } = message;
+    // console.log(message);
+    if (type === "GroupMessage") {
+        repairGroup(type, sender, messageChain, reply, quoteReply);
+    }
+});
+
+/* 开始监听消息(*)
+ * 'all' - 监听好友和群
+ * 'friend' - 只监听好友
+ * 'group' - 只监听群
+ * 'temp' - 只监听临时会话
+*/
+bot.listen('all');
+
+// 退出前向 mirai-http-api 发送释放指令(*)
+process.on('exit', () => {
+    bot.release();
+});
+
+function repairGroup(type, sender, messageChain, reply, quoteReply) {
     let msg = '';
     messageChain.forEach(chain => {
         if (chain.type === 'Plain')
@@ -54,17 +74,21 @@ bot.onMessage(async message => {
         bot.sendImageMessage("./image.jpg", message);
     else if (msg.includes('wei,zaima'))
         quoteReply([At(sender.id), Plain('buzai,cnm')]);
-});
 
-/* 开始监听消息(*)
- * 'all' - 监听好友和群
- * 'friend' - 只监听好友
- * 'group' - 只监听群
- * 'temp' - 只监听临时会话
-*/
-bot.listen('all');
-
-// 退出前向 mirai-http-api 发送释放指令(*)
-process.on('exit', () => {
-    bot.release();
-});
+    let values = [sender.group.id, 1]
+    sql.selectGroupKeyWords(values).then((res) => {
+        res.forEach(element => {
+            if (element.Key_Word === msg) {
+                reply(element.Repair_Word);
+            }
+        });
+    })
+    values = [sender.group.id, 2]
+    sql.selectGroupKeyWords(values).then((res) => {
+        res.forEach(element => {
+            if (msg.includes(element.Key_Word)) {
+                reply(element.Repair_Word);
+            }
+        });
+    })
+}

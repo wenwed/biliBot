@@ -3,13 +3,17 @@ console.log("Opened database successfully")
 
 let query = (sql, values) => {
     return new Promise((resolve, reject) => {
-        let db = new sqlite3.Database('../test.db')
-        db.run(sql, values, (err, rows) => {
+        let db = new sqlite3.Database('./database/robot.db');
+        // let db = new sqlite3.Database('./robot.db');
+        var stmt = db.prepare(sql);
+        stmt.all(values, (err, rows) => {
             if (err)
-                reject(err)
-            else
-                resolve(rows)
-        })
+                reject(err);
+            else {
+                resolve(rows);
+            }
+        });
+        stmt.finalize();
         db.close();
     })
 }
@@ -57,8 +61,15 @@ createTable(subGroup);
 createTable(subPerson);
 createTable(keyWords);
 
-//查询管理员名称是否已存在
-exports.existAdminName = (values) => {
-    let _sql = "select count(*) as count from admins where admin_name=?;";
+//关键词模块
+//给某个群添加关键词
+exports.addGroupKeyWords = (values) => {
+    let _sql = `INSERT INTO keyWords (Group_Number,Key_Word,Repair_Word,Key_Type) VALUES (?,?,?,?)`;
+    return query(_sql, values);
+}
+
+//查询一个群全部的精确或模糊关键词
+exports.selectGroupKeyWords = (values) => {
+    let _sql = "SELECT Key_Word,Repair_Word FROM keyWords WHERE Group_Number=? AND Key_Type=?;";
     return query(_sql, values);
 }
