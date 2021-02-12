@@ -51,6 +51,8 @@ bot.onMessage(async message => {
     // 发送图片，参数接受图片路径或 Buffer
     else if (msg.includes('来张图'))
         bot.sendImageMessage("./image.jpg", message);
+    else if (msg.includes('wei,zaima'))
+        quoteReply([At(sender.id), Plain('buzai,cnm')]);
 });
 
 /* 开始监听消息(*)

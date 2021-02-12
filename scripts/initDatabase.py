@@ -246,6 +246,7 @@ def addKeyWord(keyWord, repairWord, GroupNum,keyType):
         conn.commit()
         conn.close()
         return "该关键词已添加"
+        
 def deleteKeyWord(keyWord, GroupNum):
     conn = sqlite3.connect('robot.db', 30.0)
     c = conn.cursor()
@@ -260,6 +261,7 @@ def deleteKeyWord(keyWord, GroupNum):
         conn.commit()
         conn.close()
         return "该群未添加此关键词"
+
 def selectKeyWord(GroupNum,keyType):
     conn = sqlite3.connect('robot.db', 30.0)
     c = conn.cursor()
