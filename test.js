@@ -60,6 +60,8 @@ const axios = require("axios");
 //     console.log(res);
 // })
 
-let msg = "!删除精确关键词 1";
+let msg = "!删除精确关键词 1 1231 4164 646 11451401919810";
 let instruct = msg.split(" ", 2);
 console.log(instruct);
+let length = instruct[0].length + instruct[1].length + 2;
+console.log(msg.substr(length));

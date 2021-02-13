@@ -58,4 +58,15 @@ exports.repairPerson = (sender, messageChain, reply, quoteReply) => {
     });
 }
 
-function manageGroup(msg) { }
+function manageGroup(msg) {
+    let instruct = msg.split(" ", 2);
+    switch (instruct[0]) {
+        case "!help":
+            return `!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表\n
+            !动态订阅 uid\n!动态订阅列表\n!取消订阅 uid\n!勋章查询 uid\n\n
+            管理员权限：\n" + "!添加精确关键词 关键词 回复词\n!添加模糊关键词 关键词 回复词\n!删除关键词 关键词\n
+            !精确关键词列表\n!模糊关键词列表\n\n当前版本：2.1.0`
+        case "!订阅列表":
+            sql.selectGroupAllSub
+    }
+}
