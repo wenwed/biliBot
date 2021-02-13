@@ -100,19 +100,105 @@ exports.addUP = (values) => {
 }
 
 // 根据ID查询某个UP主的信息
-exports.selectUPByID = (values) => {
+exports.selectUP = (values) => {
     let _sql = "SELECT * FROM UP WHERE UID=?;";
     return query(_sql, values);
 }
 
-// 根据ID修改某个UP主的信息
-exports.updateUPByID = (values) => {
-    let _sql = `UPDATE UP SET Key_Type=?,Name=?,AID=?,Live_Status=?,Live_Start_Time=?,Last_Notice_Time=? WHERE UID=?;`;
+// 根据ID修改某个UP主的全部信息
+exports.updateUP = (values) => {
+    let _sql = `UPDATE UP SET Name=?,AID=?,Live_Status=?,Dynamic_ID_Str=?,Live_Start_Time=?,Last_Notice_Time=? WHERE UID=?;`;
+    return query(_sql, values);
+}
+
+// 根据ID修改上一次爬取某个UP主动态的时间
+exports.updateUPNoticeTime = (values) => {
+    let _sql = `UPDATE UP SET Last_Notice_Time=? WHERE UID=?;`;
+    return query(_sql, values);
+}
+
+// 根据ID修改上一次某个UP主开始直播的时间
+exports.updateUPLiveTime = (values) => {
+    let _sql = `UPDATE UP SET Live_Start_Time=? WHERE UID=?;`;
     return query(_sql, values);
 }
 
 //删除某个UP主
 exports.deleteUP = (values) => {
     let _sql = "DELETE FROM UP WHERE UID=?;";
+    return query(_sql, values);
+}
+
+// 个人关注模块
+// 添加个人关注
+exports.addPersonSub = (values) => {
+    let _sql = "INSERT INTO subPerson (UID, Person_Number,Sub_Type) VALUES (?,?,?);";
+    return query(_sql, values);
+}
+
+// 查询某个个人对某个UP主的关注
+exports.selectPersonOneSub = (values) => {
+    let _sql = "SELECT * FROM subPerson WHERE UID=? AND Person_Number=?;";
+    return query(_sql, values);
+}
+
+// 查询某个人的全部关注
+exports.selectPersonAllSub = (values) => {
+    let _sql = "SELECT * FROM subPerson WHERE UID=? AND Person_Number=?;";
+    return query(_sql, values);
+}
+
+// 查询某个人的全部直播或动态的关注
+exports.selectPersonSubByType = (values) => {
+    let _sql = "SELECT * FROM subPerson WHERE UID=? AND Person_Number=? AND Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 修改某个人对某个UP的关注种类
+exports.updatePersonSubType = (values) => {
+    let _sql = `UPDATE subPerson SET Sub_Type=? WHERE UID=? AND Person_Number=?;`;
+    return query(_sql, values);
+}
+
+// 删除某个人对某个UP的关注
+exports.updateUPLiveTime = (values) => {
+    let _sql = `DELETE FROM subPerson WHERE UID=? AND Person_Number=?;`;
+    return query(_sql, values);
+}
+
+// 群组关注模块
+// 添加群组关注
+exports.addGroupSub = (values) => {
+    let _sql = "INSERT INTO subGroup (UID, Group_Number,Sub_Type) VALUES (?,?,?);";
+    return query(_sql, values);
+}
+
+// 查询某个群组对某个UP主的关注
+exports.selectGroupOneSub = (values) => {
+    let _sql = "SELECT * FROM subGroup WHERE UID=? AND Group_Number=?;";
+    return query(_sql, values);
+}
+
+// 查询某个群组的全部关注
+exports.selectGroupAllSub = (values) => {
+    let _sql = "SELECT * FROM subGroup WHERE UID=? AND Group_Number=?;";
+    return query(_sql, values);
+}
+
+// 查询某个群组的全部直播或动态的关注
+exports.selectGroupSubByType = (values) => {
+    let _sql = "SELECT * FROM subGroup WHERE UID=? AND Group_Number=? AND Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 修改某个群组对某个UP的关注种类
+exports.updateGroupSubType = (values) => {
+    let _sql = `UPDATE subGroup SET Sub_Type=? WHERE UID=? AND Group_Number=?;`;
+    return query(_sql, values);
+}
+
+// 删除某个群组对某个UP的关注
+exports.deleteGroupSub = (values) => {
+    let _sql = `DELETE FROM subGroup WHERE UID=? AND Group_Number=?;`;
     return query(_sql, values);
 }
