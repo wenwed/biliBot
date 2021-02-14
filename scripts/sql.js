@@ -22,9 +22,8 @@ let query = (sql, values) => {
 let UP = `CREATE TABLE IF NOT EXISTS UP
     (UID TEXT PRIMARY KEY NOT NULL,
     Name TEXT NOT NULL,
-    AID TEXT NOT NULL,
+    AID TEXT,
     Live_Status TEXT NOT NULL,
-    Dynamic_ID_Str TEXT,
     Last_Notice_Time INTEGER,
     Live_Start_Time INTEGER  NOT NULL);`;
 
@@ -70,38 +69,38 @@ exports.addKeyWords = (values) => {
 
 // 查询某个群是否有某个关键词
 exports.selectExistKeyWords = (values) => {
-    let _sql = "SELECT * FROM keyWords WHERE Group_Number=? AND Key_Word=?;";
+    let _sql = `SELECT * FROM keyWords WHERE Group_Number=? AND Key_Word=?;`;
     return query(_sql, values);
 }
 
 // 更新某个群的某个关键词的类型
 exports.updateKeyWords = (values) => {
-    let _sql = "UPDATE keyWords SET Key_Type=? WHERE Group_Number=? AND Key_Word=?;";
+    let _sql = `UPDATE keyWords SET Key_Type=? WHERE Group_Number=? AND Key_Word=?;`;
     return query(_sql, values);
 }
 
 // 查询一个群全部的精确或模糊关键词
 exports.selectKeyWords = (values) => {
-    let _sql = "SELECT Key_Word, Repair_Word FROM keyWords WHERE Group_Number=? AND Key_Type=?;";
+    let _sql = `SELECT Key_Word, Repair_Word FROM keyWords WHERE Group_Number=? AND Key_Type=?;`;
     return query(_sql, values);
 }
 
 // 删除某个群的某个关键词
 exports.deleteKeyWords = (values) => {
-    let _sql = "DELETE FROM keyWords WHERE Group_Number=? AND Key_Word=?;";
+    let _sql = `DELETE FROM keyWords WHERE Group_Number=? AND Key_Word=?;`;
     return query(_sql, values);
 }
 
 // UP模块
 // 添加一个UP主
 exports.addUP = (values) => {
-    let _sql = "INSERT INTO UP (UID,Name,AID,Live_Status,Live_Start_Time,Last_Notice_Time) VALUES (?,?,?,?,?,?);";
+    let _sql = `INSERT INTO UP (UID,Name,AID,Live_Status,Live_Start_Time,Last_Notice_Time) VALUES (?,?,?,?,?,?);`;
     return query(_sql, values);
 }
 
 // 根据ID查询某个UP主的信息
 exports.selectUP = (values) => {
-    let _sql = "SELECT * FROM UP WHERE UID=?;";
+    let _sql = `SELECT * FROM UP WHERE UID=?;`;
     return query(_sql, values);
 }
 
@@ -125,32 +124,32 @@ exports.updateUPLiveTime = (values) => {
 
 //删除某个UP主
 exports.deleteUP = (values) => {
-    let _sql = "DELETE FROM UP WHERE UID=?;";
+    let _sql = `DELETE FROM UP WHERE UID=?;`;
     return query(_sql, values);
 }
 
 // 个人关注模块
 // 添加个人关注
 exports.addPersonSub = (values) => {
-    let _sql = "INSERT INTO subPerson (UID, Person_Number,Sub_Type) VALUES (?,?,?);";
+    let _sql = `INSERT INTO subPerson (UID, Person_Number,Sub_Type) VALUES (?,?,?);`;
     return query(_sql, values);
 }
 
 // 查询某个个人对某个UP主的关注
 exports.selectPersonOneSub = (values) => {
-    let _sql = "SELECT * FROM subPerson WHERE UID=? AND Person_Number=?;";
+    let _sql = `SELECT * FROM subPerson WHERE UID=? AND Person_Number=?;`;
     return query(_sql, values);
 }
 
 // 查询某个人的全部关注
 exports.selectPersonAllSub = (values) => {
-    let _sql = "SELECT * FROM subPerson WHERE UID=? AND Person_Number=?;";
+    let _sql = `SELECT * FROM subPerson WHERE UID=? AND Person_Number=?;`;
     return query(_sql, values);
 }
 
 // 查询某个人的全部直播或动态的关注
 exports.selectPersonSubByType = (values) => {
-    let _sql = "SELECT * FROM subPerson WHERE UID=? AND Person_Number=? AND Sub_Type=?;";
+    let _sql = `SELECT * FROM subPerson WHERE UID=? AND Person_Number=? AND Sub_Type=?;`;
     return query(_sql, values);
 }
 
@@ -169,25 +168,32 @@ exports.updateUPLiveTime = (values) => {
 // 群组关注模块
 // 添加群组关注
 exports.addGroupSub = (values) => {
-    let _sql = "INSERT INTO subGroup (UID, Group_Number,Sub_Type) VALUES (?,?,?);";
+    let _sql = `INSERT INTO subGroup (UID, Group_Number,Sub_Type) VALUES (?,?,?);`;
     return query(_sql, values);
 }
 
 // 查询某个群组对某个UP主的关注
 exports.selectGroupOneSub = (values) => {
-    let _sql = "SELECT * FROM subGroup WHERE UID=? AND Group_Number=?;";
+    let _sql = `SELECT subGroup.Sub_Type,UP.Name FROM subGroup,UP WHERE subGroup.UID=? AND subGroup.UID=UP.UID AND Group_Number=?;`;
     return query(_sql, values);
 }
 
 // 查询某个群组的全部关注
-exports.selectGroupAllSub = (values) => {
-    let _sql = "SELECT * FROM subGroup WHERE UID=? AND Group_Number=?;";
+exports.selectGroupAllSubByType = (values) => {
+    let _sql = `SELECT * FROM subGroup WHERE Group_Number=?;`;
+    return query(_sql, values);
+}
+
+// 查询某个群组的全部关注并获取UP主信息
+exports.selectGroupAllSubInfoByType = (values) => {
+    let _sql = `SELECT UP.UID,UP.Name FROM subGroup,UP 
+            WHERE subGroup.Group_Number=? AND subGroup.UID=UP.UID AND Sub_Type=?;`;
     return query(_sql, values);
 }
 
 // 查询某个群组的全部直播或动态的关注
 exports.selectGroupSubByType = (values) => {
-    let _sql = "SELECT * FROM subGroup WHERE UID=? AND Group_Number=? AND Sub_Type=?;";
+    let _sql = `SELECT * FROM subGroup WHERE UID=? AND Group_Number=? AND Sub_Type=?;`;
     return query(_sql, values);
 }
 

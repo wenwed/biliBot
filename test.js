@@ -1,11 +1,11 @@
 const sql = require("./scripts/sql.js");
 const axios = require("axios");
 
-// let values = [1, 1];
-// sql.selectGroupKeyWords(values)
+// let values = [965555893, 1];
+// sql.selectKeyWords(values)
 //     .then(result => {
 //         result.forEach(element => {
-//             console.log(element);
+//             console.log(element.Key_Word);
 //         });
 //     })
 
@@ -57,11 +57,15 @@ const axios = require("axios");
 //         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
 //     }
 // }).then((res) => {
-//     console.log(res);
+//     console.log(res.data);
+//     console.log(res.data.code);
 // })
 
-let msg = "!删除精确关键词 1 1231 4164 646 11451401919810";
-let instruct = msg.split(" ", 2);
-console.log(instruct);
-let length = instruct[0].length + instruct[1].length + 2;
-console.log(msg.substr(length));
+// let msg = "!删除精确关键词 1 1231 4164 646 11451401919810";
+// let instruct = msg.split(" ", 2);
+// console.log(instruct);
+// let length = instruct[0].length + instruct[1].length + 2;
+// console.log(msg.substr(length));
+
+// let values = "156456";
+// console.log(isNaN(values));

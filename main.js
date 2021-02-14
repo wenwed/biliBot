@@ -33,11 +33,11 @@ bot.onSignal('verified', async () => {
 
 // 接受消息,发送消息(*)
 bot.onMessage(async message => {
-    const { type, sender, messageChain, reply, quoteReply } = message;
+    const { type, sender, messageChain, reply, quoteReply, recall } = message;
 
     //如果为群组消息
     if (type === "GroupMessage") {
-        repair.repairGroup(sender, messageChain, reply, quoteReply);
+        repair.repairGroup(message, sender, messageChain, reply, quoteReply, recall);
     }
     else if (type === "FriendMessage") {
         repair.repairPerson(sender, messageChain, reply, quoteReply);
