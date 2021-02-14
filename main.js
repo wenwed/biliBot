@@ -40,7 +40,7 @@ bot.onMessage(async message => {
         repair.repairGroup(message, sender, messageChain, reply, quoteReply, recall);
     }
     else if (type === "FriendMessage") {
-        repair.repairPerson(sender, messageChain, reply, quoteReply);
+        repair.repairPerson(message, sender, messageChain, reply, quoteReply, recall);
     }
 });
 

@@ -67,5 +67,7 @@ const axios = require("axios");
 // let length = instruct[0].length + instruct[1].length + 2;
 // console.log(msg.substr(length));
 
-// let values = "156456";
-// console.log(isNaN(values));
+let values = ["114514", "965555893"];
+sql.selectGroupOneSub(values).then(rows => {
+    console.log(rows);
+})

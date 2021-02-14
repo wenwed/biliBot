@@ -5,7 +5,7 @@ const { Plain, At } = Mirai.MessageComponent;
 
 // 回复群组消息
 exports.repairGroup = (message, sender, messageChain, reply, quoteReply, recall) => {
-
+    console.log(message);
     // 从 messageChain 中提取文字内容
     let msg = '';
     messageChain.forEach(chain => {
@@ -55,12 +55,18 @@ exports.repairGroup = (message, sender, messageChain, reply, quoteReply, recall)
 }
 
 // 回复个人消息
-exports.repairPerson = (sender, messageChain, reply, quoteReply) => {
+exports.repairPerson = (message, sender, messageChain, reply, quoteReply, recall) => {
+    console.log(message);
     let msg = '';
     messageChain.forEach(chain => {
         if (chain.type === 'Plain')
             msg += Plain.value(chain);       // 从 messageChain 中提取文字内容
     });
+
+    // 判断是否为bot指令
+    if (msg.indexOf("!") === 0) {
+        managePerson(message, sender, messageChain, reply, quoteReply, recall, msg);
+    }
 }
 
 //处理bot的群组指令
@@ -73,7 +79,11 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
     // let length = instruct[0].length + instruct[1].length + 2;
 
     let repairWord = "";
+
+    // 消息来源群组
     let groupID = sender.group.id;
+    // 发送者的权限信息 OWNER,MEMBER,ADMINISTRATOR
+    let permission = sender.permission;
 
     let values = [];
     let type = 0;
@@ -89,19 +99,19 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
             return;
 
         case "!订阅列表":
-            values = [sender.group.id, 1];
+            values = [groupID, 1];
             repairWord = middleWare.createGroupSubList(values);
             reply(repairWord);
             return;
 
         case "!直播订阅列表":
-            values = [sender.group.id, 2];
+            values = [groupID, 2];
             repairWord = middleWare.createGroupSubList(values);
             reply(repairWord);
             return;
 
         case "!动态订阅列表":
-            values = [sender.group.id, 3];
+            values = [groupID, 3];
             repairWord = middleWare.createGroupSubList(values);
             reply(repairWord);
             return;
@@ -132,8 +142,82 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
 
         case "!取消订阅":
             UID = instruct[1];
-            repairWord = middleWare.deleteGroupSub(groupID, UID);
+            middleWare.deleteGroupSub(groupID, UID).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+    }
+}
+
+//处理bot的个人指令
+function managePerson(message, sender, messageChain, reply, quoteReply, recall, msg) {
+    // 使用空格切割字符串
+    let instruct = msg.split(" ", 2);
+    console.log(instruct[0]);
+
+    let repairWord = "";
+    let personID = sender.id;
+
+    let values = [];
+    let type = 0;
+    let UID = "";
+
+    switch (instruct[0]) {
+        case "!help":
+            repairWord = `!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表\n
+!动态订阅 uid\n!动态订阅列表\n!取消订阅 uid\n!勋章查询 uid\n
+需要管理员权限：\n!添加精确关键词 关键词 回复词\n!添加模糊关键词 关键词 回复词\n!删除关键词 关键词\n
+!精确关键词列表\n!模糊关键词列表\n\n当前版本：2.1.0`;
             reply(repairWord);
+            return;
+
+        case "!订阅列表":
+            values = [personID, 1];
+            repairWord = middleWare.createPersonSubList(values);
+            reply(repairWord);
+            return;
+
+        case "!直播订阅列表":
+            values = [personID, 2];
+            repairWord = middleWare.createPersonSubList(values);
+            reply(repairWord);
+            return;
+
+        case "!动态订阅列表":
+            values = [personID, 3];
+            repairWord = middleWare.createPersonSubList(values);
+            reply(repairWord);
+            return;
+
+        case "!订阅":
+            type = 1;
+            UID = instruct[1];
+            middleWare.subPerson(personID, type, UID).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!直播订阅":
+            type = 2;
+            UID = instruct[1];
+            middleWare.subPerson(personID, type, UID).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!动态订阅":
+            type = 3;
+            UID = instruct[1];
+            middleWare.subPerson(personID, type, UID).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!取消订阅":
+            UID = instruct[1];
+            middleWare.deletePersonSub(personID, UID).then(repairWord => {
+                reply(repairWord);
+            })
             return;
     }
 }

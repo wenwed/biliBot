@@ -137,13 +137,27 @@ exports.addPersonSub = (values) => {
 
 // 查询某个个人对某个UP主的关注
 exports.selectPersonOneSub = (values) => {
-    let _sql = `SELECT * FROM subPerson WHERE UID=? AND Person_Number=?;`;
+    let _sql = `SELECT subPerson.Sub_Type,UP.Name FROM subPerson,UP 
+        WHERE subPerson.UID=? AND subPerson.UID=UP.UID AND Person_Number=?;`;
     return query(_sql, values);
 }
 
 // 查询某个人的全部关注
 exports.selectPersonAllSub = (values) => {
     let _sql = `SELECT * FROM subPerson WHERE UID=? AND Person_Number=?;`;
+    return query(_sql, values);
+}
+
+// 查询某个群组的全部关注并获取UP主信息
+exports.selectPersonAllSubInfoByType = (values) => {
+    let _sql = `SELECT UP.UID,UP.Name FROM Person,UP 
+            WHERE subPerson.Person_Number=? AND subPerson.UID=UP.UID AND Sub_Type=?;`;
+    return query(_sql, values);
+}
+
+// 查询某个群组的全部直播或动态的关注
+exports.selectPersonSubByType = (values) => {
+    let _sql = `SELECT * FROM subPerson WHERE UID=? AND Person_Number=? AND Sub_Type=?;`;
     return query(_sql, values);
 }
 
@@ -160,7 +174,7 @@ exports.updatePersonSubType = (values) => {
 }
 
 // 删除某个人对某个UP的关注
-exports.updateUPLiveTime = (values) => {
+exports.deletePersonSub = (values) => {
     let _sql = `DELETE FROM subPerson WHERE UID=? AND Person_Number=?;`;
     return query(_sql, values);
 }
@@ -174,12 +188,13 @@ exports.addGroupSub = (values) => {
 
 // 查询某个群组对某个UP主的关注
 exports.selectGroupOneSub = (values) => {
-    let _sql = `SELECT subGroup.Sub_Type,UP.Name FROM subGroup,UP WHERE subGroup.UID=? AND subGroup.UID=UP.UID AND Group_Number=?;`;
+    let _sql = `SELECT subGroup.Sub_Type,UP.Name FROM subGroup,UP 
+        WHERE subGroup.UID=? AND subGroup.UID=UP.UID AND Group_Number=?;`;
     return query(_sql, values);
 }
 
 // 查询某个群组的全部关注
-exports.selectGroupAllSubByType = (values) => {
+exports.selectGroupAllSub = (values) => {
     let _sql = `SELECT * FROM subGroup WHERE Group_Number=?;`;
     return query(_sql, values);
 }
@@ -206,5 +221,18 @@ exports.updateGroupSubType = (values) => {
 // 删除某个群组对某个UP的关注
 exports.deleteGroupSub = (values) => {
     let _sql = `DELETE FROM subGroup WHERE UID=? AND Group_Number=?;`;
+    return query(_sql, values);
+}
+
+// 其它模块
+// 查询某个UP主是否有关注的人
+exports.selectPersonSubByUP = (values) => {
+    let _sql = `select * FROM subGroup WHERE UID=?;`;
+    return query(_sql, values);
+}
+
+// 查询某个UP主是否有关注的群组
+exports.selectGroupSubByUP = (values) => {
+    let _sql = `select * FROM subGroup WHERE UID=?;`;
     return query(_sql, values);
 }
