@@ -61,13 +61,8 @@ const axios = require("axios");
 //     console.log(res.data.code);
 // })
 
-// let msg = "!删除精确关键词 1 1231 4164 646 11451401919810";
+// let msg = "!删除精确关键词11231416464611451401919810";
 // let instruct = msg.split(" ", 2);
-// console.log(instruct);
+// console.log(instruct[1]);
 // let length = instruct[0].length + instruct[1].length + 2;
 // console.log(msg.substr(length));
-
-let values = ["114514", "965555893"];
-sql.selectGroupOneSub(values).then(rows => {
-    console.log(rows);
-})

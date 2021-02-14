@@ -5,7 +5,6 @@ const { Plain, At } = Mirai.MessageComponent;
 
 // 回复群组消息
 exports.repairGroup = (message, sender, messageChain, reply, quoteReply, recall) => {
-    console.log(message);
     // 从 messageChain 中提取文字内容
     let msg = '';
     messageChain.forEach(chain => {
@@ -16,6 +15,7 @@ exports.repairGroup = (message, sender, messageChain, reply, quoteReply, recall)
     // 判断是否为bot指令
     if (msg.indexOf("!") === 0) {
         manageGroup(message, sender, messageChain, reply, quoteReply, recall, msg);
+        return;
     }
 
     // 直接回复
@@ -66,18 +66,15 @@ exports.repairPerson = (message, sender, messageChain, reply, quoteReply, recall
     // 判断是否为bot指令
     if (msg.indexOf("!") === 0) {
         managePerson(message, sender, messageChain, reply, quoteReply, recall, msg);
+        return;
     }
 }
 
 //处理bot的群组指令
 function manageGroup(message, sender, messageChain, reply, quoteReply, recall, msg) {
-
     // 使用空格切割字符串
     let instruct = msg.split(" ", 2);
-    console.log(instruct[0]);
-    //判断前两个字符串加空格的长度，方便截取第三段
-    // let length = instruct[0].length + instruct[1].length + 2;
-
+    let length = 0;
     let repairWord = "";
 
     // 消息来源群组
@@ -100,20 +97,23 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
 
         case "!订阅列表":
             values = [groupID, 1];
-            repairWord = middleWare.createGroupSubList(values);
-            reply(repairWord);
+            middleWare.createGroupSubList(values).then(repairWord => {
+                reply(repairWord);
+            });
             return;
 
         case "!直播订阅列表":
             values = [groupID, 2];
-            repairWord = middleWare.createGroupSubList(values);
-            reply(repairWord);
+            middleWare.createGroupSubList(values).then(repairWord => {
+                reply(repairWord);
+            });
             return;
 
         case "!动态订阅列表":
             values = [groupID, 3];
-            repairWord = middleWare.createGroupSubList(values);
-            reply(repairWord);
+            middleWare.createGroupSubList(values).then(repairWord => {
+                reply(repairWord);
+            });
             return;
 
         case "!订阅":
@@ -146,6 +146,84 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
                 reply(repairWord);
             })
             return;
+
+        case "!精确关键词列表":
+            if (permission !== "ADMINISTRATOR" && permission !== "OWNER") {
+                reply("权限等级不足");
+                return;
+            }
+            values = [groupID, 1];
+            middleWare.createGroupKeyWordsList(values).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!模糊关键词列表":
+            if (permission !== "ADMINISTRATOR" && permission !== "OWNER") {
+                reply("权限等级不足");
+                return;
+            }
+            values = [groupID, 2];
+            middleWare.createGroupKeyWordsList(values).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!添加精确关键词":
+            if (permission !== "ADMINISTRATOR" && permission !== "OWNER") {
+                reply("权限等级不足");
+                return;
+            } else if (instruct.lenth === 1) {
+                reply("请输入关键词");
+                return;
+            }
+            else {
+                // 判断前两个字符串加空格的长度，方便截取第三段
+                length = instruct[0].length + instruct[1].length + 2;
+                if (msg.substr(length) === "") {
+                    reply("请输入回复词");
+                    return;
+                }
+            }
+            middleWare.addGroupKeyWords(groupID, instruct[1], 1, msg.substr(length)).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!添加模糊关键词":
+            if (permission !== "ADMINISTRATOR" && permission !== "OWNER") {
+                reply("权限等级不足");
+                return;
+            } else if (instruct.lenth === 1) {
+                reply("请输入关键词");
+                return;
+            }
+            else {
+                // 判断前两个字符串加空格的长度，方便截取第三段
+                length = instruct[0].length + instruct[1].length + 2;
+                if (msg.substr(length) === "") {
+                    reply("请输入回复词");
+                    return;
+                }
+            }
+            middleWare.addGroupKeyWords(groupID, instruct[1], 2, msg.substr(length)).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!删除关键词":
+            if (permission !== "ADMINISTRATOR" && permission !== "OWNER") {
+                reply("权限等级不足");
+                return;
+            } else if (instruct.lenth === 1) {
+                reply("请输入关键词");
+                return;
+            }
+            values = [groupID, instruct[1]];
+            middleWare.deleteGroupKeyWords(values).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
     }
 }
 
@@ -173,20 +251,23 @@ function managePerson(message, sender, messageChain, reply, quoteReply, recall, 
 
         case "!订阅列表":
             values = [personID, 1];
-            repairWord = middleWare.createPersonSubList(values);
-            reply(repairWord);
+            middleWare.createPersonSubList(values).then(repairWord => {
+                reply(repairWord);
+            })
             return;
 
         case "!直播订阅列表":
             values = [personID, 2];
-            repairWord = middleWare.createPersonSubList(values);
-            reply(repairWord);
+            middleWare.createPersonSubList(values).then(repairWord => {
+                reply(repairWord);
+            })
             return;
 
         case "!动态订阅列表":
             values = [personID, 3];
-            repairWord = middleWare.createPersonSubList(values);
-            reply(repairWord);
+            middleWare.createPersonSubList(values).then(repairWord => {
+                reply(repairWord);
+            })
             return;
 
         case "!订阅":

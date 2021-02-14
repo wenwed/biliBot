@@ -4,7 +4,6 @@ console.log("Opened database successfully")
 let query = (sql, values) => {
     return new Promise((resolve, reject) => {
         let db = new sqlite3.Database('./database/robot.db');
-        // let db = new sqlite3.Database('./robot.db');
         var stmt = db.prepare(sql);
         stmt.all(values, (err, rows) => {
             if (err)
@@ -28,7 +27,7 @@ let UP = `CREATE TABLE IF NOT EXISTS UP
     Live_Start_Time INTEGER  NOT NULL);`;
 
 // 创建群关注up主表
-// Sub_Type：1为直播订阅，2为动态订阅，3为直播加动态订阅
+// Sub_Type：1为直播&动态订阅，2为直播订阅，3为动态订阅
 let subGroup = `CREATE TABLE IF NOT EXISTS subGroup
     (UID TEXT NOT NULL,
     Group_Number TEXT NOT NULL,
@@ -68,20 +67,20 @@ exports.addKeyWords = (values) => {
 }
 
 // 查询某个群是否有某个关键词
-exports.selectExistKeyWords = (values) => {
+exports.selectOneKeyWords = (values) => {
     let _sql = `SELECT * FROM keyWords WHERE Group_Number=? AND Key_Word=?;`;
-    return query(_sql, values);
-}
-
-// 更新某个群的某个关键词的类型
-exports.updateKeyWords = (values) => {
-    let _sql = `UPDATE keyWords SET Key_Type=? WHERE Group_Number=? AND Key_Word=?;`;
     return query(_sql, values);
 }
 
 // 查询一个群全部的精确或模糊关键词
 exports.selectKeyWords = (values) => {
     let _sql = `SELECT Key_Word, Repair_Word FROM keyWords WHERE Group_Number=? AND Key_Type=?;`;
+    return query(_sql, values);
+}
+
+// 更新某个群的某个关键词的类型
+exports.updateKeyWords = (values) => {
+    let _sql = `UPDATE keyWords SET Key_Type=? WHERE Group_Number=? AND Key_Word=?;`;
     return query(_sql, values);
 }
 
