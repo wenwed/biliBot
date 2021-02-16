@@ -1,4 +1,5 @@
 const sql = require("./scripts/sql.js");
+const spider = require("./scripts/spider.js");
 const axios = require("axios");
 
 // let values = [965555893, 1];
@@ -66,3 +67,7 @@ const axios = require("axios");
 // console.log(instruct[1]);
 // let length = instruct[0].length + instruct[1].length + 2;
 // console.log(msg.substr(length));
+
+
+room = [8725120, 45665465];
+spider.searchLivingRoom(room);

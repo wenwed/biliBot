@@ -1,5 +1,6 @@
 const sql = require("./sql.js");
 const middleWare = require("./middleWare.js");
+const spider = require("./spider.js");
 const Mirai = require('node-mirai-sdk');
 const { Plain, At } = Mirai.MessageComponent;
 
@@ -27,11 +28,12 @@ exports.repairGroup = (message, sender, messageChain, reply, quoteReply, recall)
     // 撤回消息
     else if (msg.includes('撤回'))
         bot.recall(message);
-    // 发送图片，参数接受图片路径或 Buffer
     // else if (msg.includes('来张图'))
     //     bot.sendImageMessage("./image.jpg", message);
     else if (msg.includes('wei,zaima'))
         quoteReply([At(sender.id), Plain('buzai,cnm')]);
+
+    let flag = false;
 
     // 判断精确关键词
     let values = [sender.group.id, 1]
@@ -39,9 +41,12 @@ exports.repairGroup = (message, sender, messageChain, reply, quoteReply, recall)
         rows.forEach(element => {
             if (element.Key_Word === msg) {
                 reply(element.Repair_Word);
+                flag = true;
             }
         });
     })
+    //如果回复过精确关键词则直接退出
+    if (flag) return;
 
     // 判断模糊关键词
     values = [sender.group.id, 2]
@@ -56,7 +61,6 @@ exports.repairGroup = (message, sender, messageChain, reply, quoteReply, recall)
 
 // 回复个人消息
 exports.repairPerson = (message, sender, messageChain, reply, quoteReply, recall) => {
-    console.log(message);
     let msg = '';
     messageChain.forEach(chain => {
         if (chain.type === 'Plain')
@@ -67,6 +71,21 @@ exports.repairPerson = (message, sender, messageChain, reply, quoteReply, recall
     if (msg.indexOf("!") === 0) {
         managePerson(message, sender, messageChain, reply, quoteReply, recall, msg);
         return;
+    }
+}
+
+// 开始运行bilibili爬虫
+exports.startBiliSpider = async (bot) => {
+    function sleep(time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
+    // 五分钟运行一次爬虫
+    while (true) {
+        // await sleep(300000).then(() => {
+        await sleep(30000).then(() => {
+            spider.startLivingSpider(bot);
+            spider.startDynamicSpider(bot);
+        })
     }
 }
 

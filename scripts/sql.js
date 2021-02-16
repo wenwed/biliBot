@@ -115,9 +115,9 @@ exports.updateUPNoticeTime = (values) => {
     return query(_sql, values);
 }
 
-// 根据ID修改上一次某个UP主开始直播的时间
+// 根据AID修改上一次某个UP主开始直播的时间
 exports.updateUPLiveTime = (values) => {
-    let _sql = `UPDATE UP SET Live_Start_Time=? WHERE UID=?;`;
+    let _sql = `UPDATE UP SET Live_Start_Time=? WHERE AID=?;`;
     return query(_sql, values);
 }
 
@@ -220,6 +220,55 @@ exports.updateGroupSubType = (values) => {
 // 删除某个群组对某个UP的关注
 exports.deleteGroupSub = (values) => {
     let _sql = `DELETE FROM subGroup WHERE UID=? AND Group_Number=?;`;
+    return query(_sql, values);
+}
+
+// bilbili爬虫模块
+// 查询群组关注中需要爬取的房间
+exports.selectGroupRoomTospider = (values) => {
+    let _sql = "SELECT AID,Live_Start_Time FROM UP,subGroup WHERE subGroup.UID=UP.UID AND subGroup.Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 查询个人关注中需要爬取的房间
+exports.selectPersonRoomTospider = (values) => {
+    let _sql = "SELECT AID,Live_Start_Time FROM UP,subPerson WHERE subPerson.UID=UP.UID AND subPerson.Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 根据房间号和类型查找订阅的群组
+exports.selectGroupByAID = (values) => {
+    let _sql = "SELECT Group_Number FROM subGroup,UP WHERE UP.UID=subGroup.UID AND UP.AID=? AND subGroup.Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 根据房间号和类型查找订阅的个人
+exports.selectPersonByAID = (values) => {
+    let _sql = "SELECT Person_Number FROM subPerson,UP WHERE UP.UID=subPerson.UID AND UP.AID=? AND subPerson.Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 查询群组关注中需要爬取动态的UP主
+exports.selectGroupDynamicTospider = (values) => {
+    let _sql = "SELECT UID,Last_Notice_Time FROM UP,subGroup WHERE subGroup.UID=UP.UID AND subGroup.Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 查询个人关注中需要爬取动态的UP主
+exports.selectPersonDynamicTospider = (values) => {
+    let _sql = "SELECT UID,Last_Notice_Time FROM UP,subPerson WHERE subPerson.UID=UP.UID AND subPerson.Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 根据UID和类型查找订阅的群组
+exports.selectGroupByUID = (values) => {
+    let _sql = "SELECT Group_Number FROM subGroup,UP WHERE UP.UID=subGroup.UID AND UP.UID=? AND subGroup.Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// 根据房间号和类型查找订阅的个人
+exports.selectPersonByUID = (values) => {
+    let _sql = "SELECT Person_Number FROM subPerson,UP WHERE UP.UID=subPerson.UID AND UP.UID=? AND subPerson.Sub_Type=?;";
     return query(_sql, values);
 }
 

@@ -29,6 +29,8 @@ bot.onSignal('verified', async () => {
     // 获取好友列表，需要等待 session 校验之后 (verified) 才能调用 SDK 中的主动接口
     const friendList = await bot.getFriendList();
     console.log(`There are ${friendList.length} friends in bot`);
+    // 运行bilibili爬虫
+    repair.startBiliSpider(bot);
 });
 
 // 接受消息,发送消息(*)
