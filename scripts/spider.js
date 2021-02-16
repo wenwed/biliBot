@@ -5,6 +5,12 @@ function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+//启动前重置动态爬取时间防止刷屏
+exports.resetDynamicTime = () => {
+    let values = [Math.round(new Date().getTime() / 1000)];
+    sql.updateAllUPNoticeTime(values);
+}
+
 // 开始运行直播爬虫
 exports.startLivingSpider = async (bot) => {
     let rooms = {};

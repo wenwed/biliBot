@@ -79,6 +79,8 @@ exports.startBiliSpider = async (bot) => {
     function sleep(time) {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
+    //更新UP主的动态时间
+    spider.resetDynamicTime();
     // 五分钟运行一次爬虫
     while (true) {
         await sleep(300000).then(() => {

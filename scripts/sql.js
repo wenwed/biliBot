@@ -115,6 +115,12 @@ exports.updateUPNoticeTime = (values) => {
     return query(_sql, values);
 }
 
+// 重置所有UP主的爬取动态时间
+exports.updateAllUPNoticeTime = (values) => {
+    let _sql = `UPDATE UP SET Last_Notice_Time=?;`;
+    return query(_sql, values);
+}
+
 // 根据AID修改上一次某个UP主开始直播的时间
 exports.updateUPLiveTime = (values) => {
     let _sql = `UPDATE UP SET Live_Start_Time=? WHERE AID=?;`;
