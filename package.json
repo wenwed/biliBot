@@ -1,0 +1,28 @@
+{
+  "name": "bilibot",
+  "version": "1.0.0",
+  "description": "bilibili bot",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wenwed/biliBot.git"
+  },
+  "keywords": [
+    "bilibili",
+    "bot"
+  ],
+  "author": "wenwd",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wenwed/biliBot/issues"
+  },
+  "homepage": "https://github.com/wenwed/biliBot#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "node-mirai-sdk": "^0.2.3",
+    "sqlite3": "^5.0.0"
+  }
+}
