@@ -68,6 +68,11 @@ const axios = require("axios");
 // let length = instruct[0].length + instruct[1].length + 2;
 // console.log(msg.substr(length));
 
+let data = {
+    name: "4564"
+}
 
-room = [8725120, 45665465];
-spider.searchLivingRoom(room);
+if (!data.card)
+    console.log(1);
+
+console.log(data.card);

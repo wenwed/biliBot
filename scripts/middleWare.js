@@ -77,8 +77,8 @@ exports.subGroup = async (groupID, type, UID) => {
             if (infoData.live_room.roomStatus === 1)
                 AID = infoData.live_room.roomid;
             let liveStatus = infoData.live_room.liveStatus;
-            let liveStartTime = new Date().getTime();
-            let lastNoticeTime = new Date().getTime();
+            let liveStartTime = Math.round(new Date().getTime() / 1000);
+            let lastNoticeTime = Math.round(new Date().getTime() / 1000);
             values = [UID, Name, AID, liveStatus, liveStartTime, lastNoticeTime]
             sql.addUP(values);
 
@@ -217,8 +217,8 @@ exports.subPerson = async (personID, type, UID) => {
             if (infoData.live_room.roomStatus === 1)
                 AID = infoData.live_room.roomid;
             let liveStatus = infoData.live_room.liveStatus;
-            let liveStartTime = new Date().getTime();
-            let lastNoticeTime = new Date().getTime();
+            let liveStartTime = Math.round(new Date().getTime() / 1000);
+            let lastNoticeTime = Math.round(new Date().getTime() / 1000);
             values = [UID, Name, AID, liveStatus, liveStartTime, lastNoticeTime]
             sql.addUP(values);
 
