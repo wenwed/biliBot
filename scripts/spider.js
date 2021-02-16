@@ -7,34 +7,34 @@ function sleep(time) {
 
 // 开始运行直播爬虫
 exports.startLivingSpider = async (bot) => {
-    let rooms = [];
+    let rooms = {};
 
     //查询群组的全部订阅房间
     let values = [1];
     await sql.selectGroupRoomTospider(values).then(rows => {
         rows.forEach(row => {
-            rooms.push([row.AID, row.Live_Start_Time]);
+            rooms[row.AID] = row.Live_Start_Time;
         });
     })
     //查询群组的直播订阅房间
     values = [2];
     await sql.selectGroupRoomTospider(values).then(rows => {
         rows.forEach(row => {
-            rooms.push([row.AID, row.Live_Start_Time]);
+            rooms[row.AID] = row.Live_Start_Time;
         });
     })
     //查询个人的全部订阅房间
     values = [1];
     await sql.selectPersonRoomTospider(values).then(rows => {
         rows.forEach(row => {
-            rooms.push([row.AID, row.Live_Start_Time]);
+            rooms[row.AID] = row.Live_Start_Time;
         });
     })
     //查询个人的直播订阅房间
     values = [2];
     await sql.selectPersonRoomTospider(values).then(rows => {
         rows.forEach(row => {
-            rooms.push([row.AID, row.Live_Start_Time]);
+            rooms[row.AID] = row.Live_Start_Time;
         });
     })
 
@@ -43,12 +43,12 @@ exports.startLivingSpider = async (bot) => {
 }
 
 function searchLivingRooms(bot, rooms) {
-    rooms.forEach(room => {
+    for (let AID in rooms) {
         // 每隔三秒爬取一次防止被限制
         sleep(3000).then(() => {
-            searchLivingRoom(bot, room);
+            searchLivingRoom(bot, [AID, rooms[AID]]);
         })
-    });
+    };
 }
 
 // 挨个爬取直播间状态
@@ -126,34 +126,34 @@ function handlePersonLiving(bot, data, PersonID) {
 
 // 开始运行动态爬虫
 exports.startDynamicSpider = async (bot) => {
-    let UPS = [];
+    let UPS = {};
 
     //查询群组的全部订阅
     let values = [1];
     await sql.selectGroupDynamicTospider(values).then(rows => {
         rows.forEach(row => {
-            UPS.push([row.UID, row.Last_Notice_Time]);
+            UPS[row.UID] = row.Last_Notice_Time;
         });
     })
     //查询群组的订阅动态
     values = [3];
     await sql.selectGroupDynamicTospider(values).then(rows => {
         rows.forEach(row => {
-            UPS.push([row.UID, row.Last_Notice_Time]);
+            UPS[row.UID] = row.Last_Notice_Time;
         });
     })
     //查询个人的全部订阅
     values = [1];
     await sql.selectPersonDynamicTospider(values).then(rows => {
         rows.forEach(row => {
-            UPS.push([row.UID, row.Last_Notice_Time]);
+            UPS[row.UID] = row.Last_Notice_Time;
         });
     })
     //查询个人的动态订阅
     values = [3];
     await sql.selectPersonDynamicTospider(values).then(rows => {
         rows.forEach(row => {
-            UPS.push([row.UID, row.Last_Notice_Time]);
+            UPS[row.UID] = row.Last_Notice_Time;
         });
     })
 
@@ -162,15 +162,16 @@ exports.startDynamicSpider = async (bot) => {
 }
 
 function searchNewDynamics(bot, UPS) {
-    UPS.forEach(UP => {
+    for (let UID in UPS) {
+        console.log(UID);
         sleep(3000).then(() => {
-            searchNewDynamics(bot, UP);
+            searchNewDynamic(bot, [UID, UPS[UID]]);
         })
-    });
+    };
 }
 
 // 挨个爬取动态
-async function searchNewDynamics(bot, UP) {
+async function searchNewDynamic(bot, UP) {
     let data = null;
     url = `https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid=${UP[0]}`;
     await axios.get(url, {
@@ -179,7 +180,7 @@ async function searchNewDynamics(bot, UP) {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
         }
     }).then(res => {
-        data = res.data;
+        data = res.data.data;
     })
 
     // 如果有cards属性的话
@@ -189,28 +190,30 @@ async function searchNewDynamics(bot, UP) {
             let card = data.cards[i].card;
             let dynamicTime = desc.timestamp;
             if (dynamicTime > UP[1]) {
+                let msg = processDynamic(desc, card);
+                handleDynamicMessage(bot, msg, UP[0]);
+
                 // 更新动态查看时间
                 let values = [Math.round(new Date().getTime() / 1000), UP[0]];
                 sql.updateUPNoticeTime(values);
-
-                let msg = processDynamic(desc, card);
-                handleDynamicMessage(bot, msg, UP[0]);
             }
         }
     }
 }
 
 function processDynamic(desc, card) {
+    card = JSON.parse(card);
     let dyamic_id = desc.dynamic_id;
     let type = desc.type;
     let uname = desc.user_profile.info.uname;
+    let content = null;
     let res = "";
 
     // 转发动态
     if (type == 1) {
         let pre_dy_id = desc.pre_dy_id;
         let orig_type = desc.orig_type;
-        let content = card.item.content;
+        content = card.item.content;
         // 转发带有图片的原创动态
         if (orig_type == 2) {
             res = `${uname}转发了动态：\nURL：https://t.bilibili.com/${dyamic_id}\n${content}`;
@@ -306,7 +309,7 @@ function handleDynamicMessage(bot, msg, UID) {
             bot.sendGroupMessage(msg, row.Group_Number);
         });
     })
-    let values = [UID, 3];
+    values = [UID, 3];
     sql.selectGroupByUID(values).then(rows => {
         rows.forEach(row => {
             bot.sendGroupMessage(msg, row.Group_Number);

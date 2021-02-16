@@ -223,11 +223,11 @@ exports.subPerson = async (personID, type, UID) => {
             sql.addUP(values);
 
             // 向数据库中新增关注
-            values = [UID, groupID, type];
+            values = [UID, personID, type];
             sql.addPersonSub(values);
             repairWord = `订阅${Name}成功`
         }
-    }).catch(() => {
+    }).catch((err) => {
         // 之前throw的"STOP" error会直接跳转到这里
         if (repairWord === "")
             repairWord = "未知错误";

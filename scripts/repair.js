@@ -81,8 +81,7 @@ exports.startBiliSpider = async (bot) => {
     }
     // 五分钟运行一次爬虫
     while (true) {
-        // await sleep(300000).then(() => {
-        await sleep(30000).then(() => {
+        await sleep(300000).then(() => {
             spider.startLivingSpider(bot);
             spider.startDynamicSpider(bot);
         })

@@ -68,11 +68,21 @@ const axios = require("axios");
 // let length = instruct[0].length + instruct[1].length + 2;
 // console.log(msg.substr(length));
 
-let data = {
-    name: "4564"
+content = {
+    "user": {
+        "uid": 418422857,
+        "uname": "胸罩",
+        "face":
+            "https://i2.hdslb.com/bfs/face/7c23386180c51e6c0e4ea8c6052102993932b53e.jpg"
+    }, "item": {
+        "rp_id": 492442795342646322,
+        "uid": 418422857,
+        "content": "测试",
+        "ctrl": "",
+        "orig_dy_id": 0,
+        "pre_dy_id": 0,
+        "timestamp": 1613494173,
+        "reply": 1
+    }
 }
-
-if (!data.card)
-    console.log(1);
-
-console.log(data.card);
+console.log(content.item);

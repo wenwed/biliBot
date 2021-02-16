@@ -250,13 +250,13 @@ exports.selectPersonByAID = (values) => {
 
 // 查询群组关注中需要爬取动态的UP主
 exports.selectGroupDynamicTospider = (values) => {
-    let _sql = "SELECT UID,Last_Notice_Time FROM UP,subGroup WHERE subGroup.UID=UP.UID AND subGroup.Sub_Type=?;";
+    let _sql = "SELECT UP.UID,Last_Notice_Time FROM UP,subGroup WHERE subGroup.UID=UP.UID AND subGroup.Sub_Type=?;";
     return query(_sql, values);
 }
 
 // 查询个人关注中需要爬取动态的UP主
 exports.selectPersonDynamicTospider = (values) => {
-    let _sql = "SELECT UID,Last_Notice_Time FROM UP,subPerson WHERE subPerson.UID=UP.UID AND subPerson.Sub_Type=?;";
+    let _sql = "SELECT UP.UID,Last_Notice_Time FROM UP,subPerson WHERE subPerson.UID=UP.UID AND subPerson.Sub_Type=?;";
     return query(_sql, values);
 }
 
