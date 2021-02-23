@@ -131,3 +131,10 @@ sudo npm install --registry=https://registry.npm.taobao.org --unsafe-perm
 
 后台运行mcl：`sudo nohup ./mcl >dev/null 2>&1 &`，可以不使用输入日志
 
+剩下的开发目标：
+
+1.复读模块
+
+2.勋章查询模块
+
+3.转发专栏
