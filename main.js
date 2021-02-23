@@ -11,8 +11,8 @@ const repair = require("./scripts/repair.js");
 */
 const bot = new Mirai({
     host: 'http://127.0.0.1:8080',
-    authKey: 'xiaochuan114514',
-    qq: 1909239542,
+    authKey: '在mirai-api-http的setting.yml中自己定义的authkey',
+    qq: 你的QQ号,
     enableWebsocket: false,
 });
 
