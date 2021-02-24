@@ -155,7 +155,7 @@ exports.selectPersonAllSub = (values) => {
 
 // 查询某个群组的全部关注并获取UP主信息
 exports.selectPersonAllSubInfoByType = (values) => {
-    let _sql = `SELECT UP.UID,UP.Name FROM Person,UP 
+    let _sql = `SELECT UP.UID,UP.Name FROM subPerson,UP 
             WHERE subPerson.Person_Number=? AND subPerson.UID=UP.UID AND Sub_Type=?;`;
     return query(_sql, values);
 }
