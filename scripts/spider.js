@@ -171,7 +171,6 @@ exports.startDynamicSpider = async (bot) => {
 
 async function searchNewDynamics(bot, UPS) {
     for (let UID in UPS) {
-        console.log(UID);
         await sleep(3000).then(() => {
             searchNewDynamic(bot, UID, UPS[UID]);
         })
@@ -289,7 +288,6 @@ function processDynamic(desc, card) {
     }
     // 原创文字动态
     else if (type == 4) {
-        let origin = JSON.parse(card.origin);
         res = `${uname}发表了新动态：\n${content}\nURL：https://t.bilibili.com/${dyamic_id}`;
     }
     // 发表视频

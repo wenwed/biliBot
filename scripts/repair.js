@@ -109,7 +109,7 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
     switch (instruct[0]) {
         case "!help":
             repairWord = `!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表\n
-!动态订阅 uid\n!动态订阅列表\n!取消订阅 uid\n!勋章查询 uid\n
+!动态订阅 uid\n!动态订阅列表\n!取消订阅 uid\n
 需要管理员权限：\n!添加精确关键词 关键词 回复词\n!添加模糊关键词 关键词 回复词\n!删除关键词 关键词\n
 !精确关键词列表\n!模糊关键词列表\n\n当前版本：3.1.0\ngithub地址：https://github.com/wenwed/biliBot`;
             reply(repairWord);
@@ -251,7 +251,6 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
 function managePerson(message, sender, messageChain, reply, quoteReply, recall, msg) {
     // 使用空格切割字符串
     let instruct = msg.split(" ", 2);
-    console.log(instruct[0]);
 
     let repairWord = "";
     let personID = sender.id;
