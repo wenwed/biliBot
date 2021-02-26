@@ -4,76 +4,6 @@ const spider = require("./spider.js");
 const Mirai = require('node-mirai-sdk');
 const { Plain, At } = Mirai.MessageComponent;
 
-// 回复群组消息
-exports.repairGroup = (message, sender, messageChain, reply, quoteReply, recall) => {
-    // 从 messageChain 中提取文字内容
-    let msg = '';
-    messageChain.forEach(chain => {
-        if (chain.type === 'Plain')
-            msg += Plain.value(chain);
-    });
-
-    // 判断是否为bot指令
-    if (msg.indexOf("!") === 0) {
-        manageGroup(message, sender, messageChain, reply, quoteReply, recall, msg);
-        return;
-    }
-
-    // 直接回复
-    if (msg.includes('收到了吗'))
-        reply('收到了收到了')                           // 或者: bot.reply('收到了收到了', message)
-    // 引用回复
-    else if (msg.includes('引用我'))
-        quoteReply([At(sender.id), Plain('好的')]);     // 或者: bot.quoteReply(messageChain, message)
-    // 撤回消息
-    else if (msg.includes('撤回'))
-        bot.recall(message);
-    // else if (msg.includes('来张图'))
-    //     bot.sendImageMessage("./image.jpg", message);
-    else if (msg.includes('wei,zaima'))
-        quoteReply([At(sender.id), Plain('buzai,cnm')]);
-
-    let flag = false;
-
-    // 判断精确关键词
-    let values = [sender.group.id, 1]
-    sql.selectKeyWords(values).then(rows => {
-        rows.forEach(element => {
-            if (element.Key_Word === msg) {
-                reply(element.Repair_Word);
-                flag = true;
-            }
-        });
-    })
-    //如果回复过精确关键词则直接退出
-    if (flag) return;
-
-    // 判断模糊关键词
-    values = [sender.group.id, 2]
-    sql.selectKeyWords(values).then(rows => {
-        rows.forEach(element => {
-            if (msg.includes(element.Key_Word)) {
-                reply(element.Repair_Word);
-            }
-        });
-    })
-}
-
-// 回复个人消息
-exports.repairPerson = (message, sender, messageChain, reply, quoteReply, recall) => {
-    let msg = '';
-    messageChain.forEach(chain => {
-        if (chain.type === 'Plain')
-            msg += Plain.value(chain);       // 从 messageChain 中提取文字内容
-    });
-
-    // 判断是否为bot指令
-    if (msg.indexOf("!") === 0) {
-        managePerson(message, sender, messageChain, reply, quoteReply, recall, msg);
-        return;
-    }
-}
-
 // 开始运行bilibili爬虫
 exports.startBiliSpider = async (bot) => {
     function sleep(time) {
@@ -87,6 +17,85 @@ exports.startBiliSpider = async (bot) => {
             spider.startLivingSpider(bot);
             spider.startDynamicSpider(bot);
         })
+    }
+}
+
+// 回复群组消息
+exports.repairGroup = async (bot, message, sender, messageChain, reply, quoteReply, recall) => {
+    // 从 messageChain 中提取文字内容
+    let msg = '';
+    messageChain.forEach(chain => {
+        if (chain.type === 'Plain')
+            msg += Plain.value(chain);
+    });
+
+    // 判断是否为bot指令
+    if (msg.indexOf("!") === 0) {
+        manageGroup(message, sender, messageChain, reply, quoteReply, recall, msg);
+        return;
+    }
+
+    let target = 0;
+    messageChain.forEach(chain => {
+        if (chain.type === 'At') {
+            target = chain.target;
+        }
+    });
+
+    // 群组聊天@了bot
+    if (target === bot.qq) {
+        if (msg === " " || msg === "") {
+            sql.selectAllAtWords().then((rows) => {
+                let len = rows.length;
+                let ran = Math.floor(Math.random() * len);
+                reply(rows[ran]["At_Word"]);
+                return;
+            })
+        } else if (msg === "老婆" || msg === " 老婆") {
+            bot.sendImageMessage("./images/feizhai.jpg", message);
+            return;
+        }
+    }
+
+    // else if (msg.includes('引用我'))
+    //     quoteReply([At(sender.id), Plain('好的')]);     // 或者: bot.quoteReply(messageChain, message)
+
+    // 判断精确关键词
+    let values = [sender.group.id, 1]
+    sql.selectKeyWords(values).then(rows => {
+        rows.forEach(element => {
+            if (element.Key_Word === msg) {
+                reply(element.Repair_Word);
+                flag = true;
+                return;
+            }
+        });
+    })
+
+    // 判断模糊关键词
+    values = [sender.group.id, 2]
+    sql.selectKeyWords(values).then(rows => {
+        rows.forEach(element => {
+            if (msg.includes(element.Key_Word)) {
+                reply(element.Repair_Word);
+                return;
+            }
+        });
+    })
+}
+
+// 回复个人消息
+exports.repairPerson = (bot, message, sender, messageChain, reply, quoteReply, recall) => {
+    let msg = '';
+    messageChain.forEach(chain => {
+        if (chain.type === 'Plain')
+            msg += Plain.value(chain);       // 从 messageChain 中提取文字内容
+    });
+
+    // 判断是否为bot指令
+    if (msg.indexOf("!") === 0) {
+        managePerson(message, sender, messageChain, reply, quoteReply, recall, msg);
+        return;
     }
 }
 

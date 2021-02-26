@@ -39,10 +39,10 @@ bot.onMessage(async message => {
 
     //如果为群组消息
     if (type === "GroupMessage") {
-        repair.repairGroup(message, sender, messageChain, reply, quoteReply, recall);
+        repair.repairGroup(bot, message, sender, messageChain, reply, quoteReply, recall);
     }
     else if (type === "FriendMessage") {
-        repair.repairPerson(message, sender, messageChain, reply, quoteReply, recall);
+        repair.repairPerson(bot, message, sender, messageChain, reply, quoteReply, recall);
     }
 });
 

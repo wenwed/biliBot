@@ -130,4 +130,5 @@ dmypy.json
 
 
 /node_modules
-robot.db
+/robot.db
+/database/robot.db

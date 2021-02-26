@@ -1,3 +1,5 @@
+const { botInvitedJoinGroupRequestHandler } = require("node-mirai-sdk/src/manage");
+
 const sqlite3 = require("sqlite3").verbose();
 console.log("Opened database successfully")
 
@@ -49,6 +51,11 @@ let keyWords = `CREATE TABLE IF NOT EXISTS keyWords
     Key_Type INTEGER NOT NULL,
     PRIMARY KEY(Key_Word,Group_Number));`;
 
+// 创建群组@回复词表
+let atWords = `CREATE TABLE IF NOT EXISTS atWords
+    (atWordID INTEGER PRIMARY KEY AUTOINCREMENT,
+    At_Word TEXT NOT NULL);`;
+
 // 创建表
 let createTable = (sql) => {
     return query(sql, []);
@@ -58,6 +65,7 @@ createTable(UP);
 createTable(subGroup);
 createTable(subPerson);
 createTable(keyWords);
+createTable(atWords);
 
 // 关键词模块
 // 给某个群添加关键词
@@ -275,6 +283,19 @@ exports.selectGroupByUID = (values) => {
 // 根据房间号和类型查找订阅的个人
 exports.selectPersonByUID = (values) => {
     let _sql = "SELECT Person_Number FROM subPerson,UP WHERE UP.UID=subPerson.UID AND UP.UID=? AND subPerson.Sub_Type=?;";
+    return query(_sql, values);
+}
+
+// @bot回复词模块
+// 添加@bot后的回复词
+exports.addAtWords = (values) => {
+    let _sql = `INSERT INTO atWords (At_Word) VALUES (?);`;
+    return query(_sql, values);
+}
+
+// 查询全部的@bot回复词
+exports.selectAllAtWords = (values) => {
+    let _sql = `SELECT * FROM atWords;`;
     return query(_sql, values);
 }
 
