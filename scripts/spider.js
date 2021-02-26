@@ -180,7 +180,7 @@ async function searchNewDynamics(bot, UPS) {
 // 爬取动态
 async function searchNewDynamic(bot, UID, lastNociceTime) {
     let data = null;
-    url = `https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid=${UID}}`;
+    url = `https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid=${UID}`;
     await axios.get(url, {
         headers: {
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -198,10 +198,10 @@ async function searchNewDynamic(bot, UID, lastNociceTime) {
             let dynamicTime = desc.timestamp;
             if (dynamicTime > lastNociceTime) {
                 let msg = processDynamic(desc, card);
-                handleDynamicMessage(bot, msg, { UID });
+                handleDynamicMessage(bot, msg, UID);
 
                 // 更新动态查看时间
-                let values = [Math.round(new Date().getTime() / 1000), { UID }];
+                let values = [Math.round(new Date().getTime() / 1000), UID];
                 sql.updateUPNoticeTime(values);
             } else {
                 break;
@@ -211,6 +211,7 @@ async function searchNewDynamic(bot, UID, lastNociceTime) {
 }
 
 function processDynamic(desc, card) {
+    // exports.processDynamic = (desc, card) => {
     card = JSON.parse(card);
     let dyamic_id = desc.dynamic_id_str;
     let type = desc.type;
@@ -288,6 +289,8 @@ function processDynamic(desc, card) {
     }
     // 原创文字动态
     else if (type == 4) {
+        console.log(typeof card.item);
+        content = card.item.content;
         res = `${uname}发表了新动态：\n${content}\nURL：https://t.bilibili.com/${dyamic_id}`;
     }
     // 发表视频
