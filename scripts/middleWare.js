@@ -262,7 +262,7 @@ exports.deletePersonSub = async (personID, UID) => {
     }).then(rows => {
         // 查找群组关注的数量
         subNum += rows.length;
-        return sql.selectPersonSubByUP(values);
+        return sql.selectGroupSubByUP(values);
     }).then(rows => {
         subNum += rows.length;
         if (subNum !== 0) {

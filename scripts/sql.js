@@ -281,7 +281,7 @@ exports.selectPersonByUID = (values) => {
 // 其它模块
 // 查询某个UP主是否有关注的人
 exports.selectPersonSubByUP = (values) => {
-    let _sql = `select * FROM subGroup WHERE UID=?;`;
+    let _sql = `select * FROM subPerson WHERE UID=?;`;
     return query(_sql, values);
 }
 
