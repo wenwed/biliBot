@@ -35,9 +35,22 @@ const sql = require("./scripts/sql.js");
 
 // add(config, values);
 
-sql.selectAllAtWords().then((rows) => {
-    let len = rows.length;
-    let ran = Math.floor(Math.random() * len);
-    // reply(rows[ran][1]);
-    console.log(rows[ran]["At_Word"]);
+// sql.selectAllAtWords().then((rows) => {
+//     let len = rows.length;
+//     let ran = Math.floor(Math.random() * len);
+//     // reply(rows[ran][1]);
+//     console.log(rows[ran]["At_Word"]);
+// })
+
+let msg = "他你我bot";
+values = [114514]
+sql.selectGroupBanRepeat(values).then((rows) => {
+    if (rows.length === 0) {
+        // 复读模块
+        let ran = Math.floor(Math.random() * 80);
+        if (ran !== 1) {
+            let repeatWord = msg.replace(/你/g, "他").replace(/我/g, "你").replace(/bot/g, "我");
+            console.log(repeatWord);
+        }
+    }
 })

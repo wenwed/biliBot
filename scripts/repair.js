@@ -54,6 +54,9 @@ exports.repairGroup = async (bot, message, sender, messageChain, reply, quoteRep
         } else if (msg === "老婆" || msg === " 老婆") {
             bot.sendImageMessage("./images/feizhai.jpg", message);
             return;
+        } else {
+            bot.sendImageMessage("./images/ybb.jpg", message);
+            return;
         }
     }
 
@@ -75,12 +78,25 @@ exports.repairGroup = async (bot, message, sender, messageChain, reply, quoteRep
     // 判断模糊关键词
     values = [sender.group.id, 2]
     sql.selectKeyWords(values).then(rows => {
-        rows.forEach(element => {
-            if (msg.includes(element.Key_Word)) {
-                reply(element.Repair_Word);
+        for (let i = 0; i < rows.length; i++) {
+            if (msg.includes(rows[i].Key_Word)) {
+                reply(rows[i].Repair_Word);
                 return;
             }
-        });
+        }
+    })
+
+    values = [sender.group.id]
+    sql.selectGroupBanRepeat(values).then((rows) => {
+        if (rows.length === 0) {
+            // 复读模块
+            let ran = Math.floor(Math.random() * 80);
+            if (ran === 1) {
+                let repeatWord = msg.replace(/你/g, "他").replace(/我/g, "你").replace(/bot/g, "我");
+                reply(repeatWord);
+                return;
+            }
+        }
     })
 }
 
@@ -117,10 +133,11 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
 
     switch (instruct[0]) {
         case "!help":
-            repairWord = `!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表\n
+            repairWord = `!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表
 !动态订阅 uid\n!动态订阅列表\n!取消订阅 uid\n
-需要管理员权限：\n!添加精确关键词 关键词 回复词\n!添加模糊关键词 关键词 回复词\n!删除关键词 关键词\n
-!精确关键词列表\n!模糊关键词列表\n\n当前版本：3.1.0\ngithub地址：https://github.com/wenwed/biliBot`;
+需要管理员权限：\n!添加精确关键词 关键词 回复词\n!添加模糊关键词 关键词 回复词\n!删除关键词 关键词
+!精确关键词列表\n!模糊关键词列表\n!开启复读\n!关闭复读\n
+当前版本：3.1.0\ngithub地址：https://github.com/wenwed/biliBot`;
             reply(repairWord);
             return;
 
@@ -250,6 +267,28 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
             }
             values = [groupID, instruct[1]];
             middleWare.deleteGroupKeyWords(values).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!开启复读":
+            if (permission !== "ADMINISTRATOR" && permission !== "OWNER") {
+                reply("权限等级不足");
+                return;
+            }
+            values = [groupID];
+            middleWare.startRepeat(values).then(repairWord => {
+                reply(repairWord);
+            })
+            return;
+
+        case "!关闭复读":
+            if (permission !== "ADMINISTRATOR" && permission !== "OWNER") {
+                reply("权限等级不足");
+                return;
+            }
+            values = [groupID];
+            middleWare.stopRepeat(values).then(repairWord => {
                 reply(repairWord);
             })
             return;

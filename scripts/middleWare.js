@@ -160,6 +160,46 @@ exports.createPersonSubList = async (values) => {
     return repairWord;
 }
 
+// 开启复读
+exports.startRepeat = async (values) => {
+    let repairWord = "";
+    await sql.selectGroupBanRepeat(values).then((rows) => {
+        if (rows.length === 0) {
+            repairWord = `该群组已开启复读功能`;
+            throw new Error("STOP");
+        } else {
+            return sql.deleteGroupBanRepeat(values);
+        }
+    }).then(() => {
+        repairWord = `开启复读功能`;
+    }).catch(() => {
+        if (repairWord === "") {
+            repairWord = `未知错误`;
+        }
+    })
+    return repairWord;
+}
+
+// 关闭复读
+exports.stopRepeat = async (values) => {
+    let repairWord = "";
+    await sql.selectGroupBanRepeat(values).then((rows) => {
+        if (rows.length === 1) {
+            repairWord = `该群组已关闭复读功能`;
+            throw new Error("STOP");
+        } else {
+            return sql.addGroupBanRepeat(values);
+        }
+    }).then(() => {
+        repairWord = `关闭复读功能`;
+    }).catch(() => {
+        if (repairWord === "") {
+            repairWord = `未知错误`;
+        }
+    })
+    return repairWord;
+}
+
 //为个人订阅一位UP主
 exports.subPerson = async (personID, type, UID) => {
     // 判断用户输入的UID是不是数字

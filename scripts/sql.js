@@ -56,6 +56,10 @@ let atWords = `CREATE TABLE IF NOT EXISTS atWords
     (atWordID INTEGER PRIMARY KEY AUTOINCREMENT,
     At_Word TEXT NOT NULL);`;
 
+// 创建ban复读群组表
+let repeatBan = `CREATE TABLE IF NOT EXISTS repeatBan
+    (Group_Number INTEGER PRIMARY KEY);`;
+
 // 创建表
 let createTable = (sql) => {
     return query(sql, []);
@@ -66,6 +70,7 @@ createTable(subGroup);
 createTable(subPerson);
 createTable(keyWords);
 createTable(atWords);
+createTable(repeatBan);
 
 // 关键词模块
 // 给某个群添加关键词
@@ -296,6 +301,25 @@ exports.addAtWords = (values) => {
 // 查询全部的@bot回复词
 exports.selectAllAtWords = (values) => {
     let _sql = `SELECT * FROM atWords;`;
+    return query(_sql, values);
+}
+
+// 复读模块
+// 添加群组复读
+exports.addGroupBanRepeat = (values) => {
+    let _sql = `INSERT INTO repeatBan (Group_Number) VALUES (?);`;
+    return query(_sql, values);
+}
+
+// 查询某个群组是否关闭复读
+exports.selectGroupBanRepeat = (values) => {
+    let _sql = `SELECT * FROM repeatBan WHERE Group_Number=?;`;
+    return query(_sql, values);
+}
+
+// 删除群组复读
+exports.deleteGroupBanRepeat = (values) => {
+    let _sql = `DELETE FROM repeatBan WHERE Group_Number=?;`;
     return query(_sql, values);
 }
 
