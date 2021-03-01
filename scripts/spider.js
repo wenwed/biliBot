@@ -210,6 +210,7 @@ async function searchNewDynamic(bot, UID, lastNociceTime) {
     }
 }
 
+// 根据动态的代码处理动态
 function processDynamic(desc, card) {
     // exports.processDynamic = (desc, card) => {
     card = JSON.parse(card);

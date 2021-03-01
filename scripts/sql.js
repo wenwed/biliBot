@@ -1,8 +1,7 @@
-const { botInvitedJoinGroupRequestHandler } = require("node-mirai-sdk/src/manage");
-
 const sqlite3 = require("sqlite3").verbose();
 console.log("Opened database successfully")
 
+// 创建一个执行sql语句的promise函数
 let query = (sql, values) => {
     return new Promise((resolve, reject) => {
         let db = new sqlite3.Database('./database/robot.db');
@@ -103,6 +102,7 @@ exports.deleteKeyWords = (values) => {
     return query(_sql, values);
 }
 
+
 // UP模块
 // 添加一个UP主
 exports.addUP = (values) => {
@@ -145,6 +145,7 @@ exports.deleteUP = (values) => {
     let _sql = `DELETE FROM UP WHERE UID=?;`;
     return query(_sql, values);
 }
+
 
 // 个人关注模块
 // 添加个人关注
@@ -197,6 +198,7 @@ exports.deletePersonSub = (values) => {
     return query(_sql, values);
 }
 
+
 // 群组关注模块
 // 添加群组关注
 exports.addGroupSub = (values) => {
@@ -241,6 +243,7 @@ exports.deleteGroupSub = (values) => {
     let _sql = `DELETE FROM subGroup WHERE UID=? AND Group_Number=?;`;
     return query(_sql, values);
 }
+
 
 // bilbili爬虫模块
 // 查询群组关注中需要爬取的房间
@@ -291,6 +294,7 @@ exports.selectPersonByUID = (values) => {
     return query(_sql, values);
 }
 
+
 // @bot回复词模块
 // 添加@bot后的回复词
 exports.addAtWords = (values) => {
@@ -303,6 +307,7 @@ exports.selectAllAtWords = (values) => {
     let _sql = `SELECT * FROM atWords;`;
     return query(_sql, values);
 }
+
 
 // 复读模块
 // 添加群组复读
@@ -322,6 +327,7 @@ exports.deleteGroupBanRepeat = (values) => {
     let _sql = `DELETE FROM repeatBan WHERE Group_Number=?;`;
     return query(_sql, values);
 }
+
 
 // 其它模块
 // 查询某个UP主是否有关注的人

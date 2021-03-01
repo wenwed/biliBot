@@ -1,6 +1,7 @@
 // const axios = require("axios");
 // const spider = require("./scripts/spider.js");
-const sql = require("./scripts/sql.js");
+// const sql = require("./scripts/sql.js");
+// const middleWare = require("./scripts/middleWare.js");
 // // 爬取动态
 // async function searchNewDynamic(UID) {
 //     let data = null;
@@ -42,15 +43,17 @@ const sql = require("./scripts/sql.js");
 //     console.log(rows[ran]["At_Word"]);
 // })
 
-let msg = "他你我bot";
-values = [114514]
-sql.selectGroupBanRepeat(values).then((rows) => {
-    if (rows.length === 0) {
-        // 复读模块
-        let ran = Math.floor(Math.random() * 80);
-        if (ran !== 1) {
-            let repeatWord = msg.replace(/你/g, "他").replace(/我/g, "你").replace(/bot/g, "我");
-            console.log(repeatWord);
-        }
-    }
-})
+// let msg = "他你我bot";
+// values = [114514]
+// sql.selectGroupBanRepeat(values).then((rows) => {
+//     if (rows.length === 0) {
+//         // 复读模块
+//         let ran = Math.floor(Math.random() * 80);
+//         if (ran !== 1) {
+//             let repeatWord = msg.replace(/你/g, "他").replace(/我/g, "你").replace(/bot/g, "我");
+//             console.log(repeatWord);
+//         }
+//     }
+// })
+
+// middleWare.searchBiliMedal(114514);

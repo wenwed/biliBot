@@ -1,5 +1,5 @@
 const Mirai = require("node-mirai-sdk");
-const { Plain, At } = Mirai.MessageComponent;
+// const { Plain, At } = Mirai.MessageComponent;
 const repair = require("./scripts/repair.js");
 
 /**
@@ -41,6 +41,7 @@ bot.onMessage(async message => {
     if (type === "GroupMessage") {
         repair.repairGroup(bot, message, sender, messageChain, reply, quoteReply, recall);
     }
+    // 如果消息为好友消息，使用好友消息处理函数
     else if (type === "FriendMessage") {
         repair.repairPerson(bot, message, sender, messageChain, reply, quoteReply, recall);
     }
