@@ -86,6 +86,7 @@ exports.repairGroup = async (bot, message, sender, messageChain, reply, quoteRep
         }
     })
 
+    // 复读
     values = [sender.group.id]
     sql.selectGroupBanRepeat(values).then((rows) => {
         if (rows.length === 0) {
@@ -134,9 +135,9 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
     switch (instruct[0]) {
         case "!help":
             repairWord = `!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表
-!动态订阅 uid\n!动态订阅列表\n!取消订阅 uid\n
+!动态订阅 uid\n!动态订阅列表\n!取消订阅 uid
 需要管理员权限：\n!添加精确关键词 关键词 回复词\n!添加模糊关键词 关键词 回复词\n!删除关键词 关键词
-!精确关键词列表\n!模糊关键词列表\n!开启复读\n!关闭复读\n
+!精确关键词列表\n!模糊关键词列表\n!开启复读\n!关闭复读
 当前版本：3.0.0\ngithub地址：https://github.com/wenwed/biliBot`;
             reply(repairWord);
             return;
