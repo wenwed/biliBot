@@ -125,8 +125,8 @@ sudo ./mcl
 sudo npm install --registry=https://registry.npm.taobao.org --unsafe-perm
 ```
 
-3.接着在命令行中输入`node main.js`即可运行bot，输入`sudo nohup node main.js >dev/null 2>&1 &`可以后台运行bot且不使用输出日志
+3.接着在命令行中输入`node main.js`即可运行bot，输入`sudo nohup node main.js >/dev/null 2>&1 &`可以后台运行bot且不使用输出日志
 
 # 其它
 
-后台运行mcl：`sudo nohup ./mcl >dev/null 2>&1 &`，可以不使用输入日志
+后台运行mcl：`sudo nohup ./mcl >/dev/null 2>&1 &`，可以不使用输入日志
