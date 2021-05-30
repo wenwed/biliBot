@@ -1,6 +1,7 @@
 const Mirai = require("node-mirai-sdk");
 // const { Plain, At } = Mirai.MessageComponent;
 const repair = require("./scripts/repair.js");
+const autoBili = require("./auto/autoBili.js");
 
 /**
 * 服务端设置(*)
@@ -29,22 +30,25 @@ bot.onSignal('verified', async () => {
     // 获取好友列表，需要等待 session 校验之后 (verified) 才能调用 SDK 中的主动接口
     const friendList = await bot.getFriendList();
     console.log(`There are ${friendList.length} friends in bot`);
+    /*    自动任务    */
+
     // 运行bilibili爬虫
-    repair.startBiliSpider(bot);
+    autoBili.startBiliSpider(bot);
+
 });
 
 // 接受消息,发送消息(*)
 bot.onMessage(async message => {
     const { type, sender, messageChain, reply, quoteReply, recall } = message;
+    // repair.repairGroup(bot, message, sender, messageChain, reply, quoteReply, recall);
 
-    //如果为群组消息
-    if (type === "GroupMessage") {
-        repair.repairGroup(bot, message, sender, messageChain, reply, quoteReply, recall);
-    }
-    // 如果消息为好友消息，使用好友消息处理函数
-    else if (type === "FriendMessage") {
-        repair.repairPerson(bot, message, sender, messageChain, reply, quoteReply, recall);
-    }
+    // 从 messageChain 中提取文字内容
+    let msg = '';
+    messageChain.forEach(chain => {
+        if (chain.type === 'Plain')
+            msg += Plain.value(chain);
+    });
+
 });
 
 /* 开始监听消息(*)

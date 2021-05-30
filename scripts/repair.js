@@ -4,22 +4,6 @@ const spider = require("./spider.js");
 const Mirai = require('node-mirai-sdk');
 const { Plain, At } = Mirai.MessageComponent;
 
-// 开始运行bilibili爬虫
-exports.startBiliSpider = async (bot) => {
-    function sleep(time) {
-        return new Promise((resolve) => setTimeout(resolve, time));
-    }
-    //更新UP主的动态时间
-    spider.resetDynamicTime();
-    // 五分钟运行一次爬虫
-    while (true) {
-        await sleep(300000).then(() => {
-            spider.startLivingSpider(bot);
-            spider.startDynamicSpider(bot);
-        })
-    }
-}
-
 // 回复群组消息
 exports.repairGroup = async (bot, message, sender, messageChain, reply, quoteReply, recall) => {
     // 从 messageChain 中提取文字内容
