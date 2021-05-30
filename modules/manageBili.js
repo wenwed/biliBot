@@ -5,66 +5,50 @@ const axios = require("axios");
 exports.checkBili = (bot, message, msg) => {
     // 判断是否为指令
     if (msg.indexOf("!") === 0) {
-        // manageGroup(bot, message);
-        const { sender, type, reply } = message;
 
-        // 使用空格切割字符串
+        const { sender, type, reply } = message;
+        // 切割字符串
         let instruct = msg.split(" ", 2);
-        // let length = 0;
 
         switch (instruct[0]) {
             case "!订阅列表":
-                createSubList(sender, type).then(repairWord => {
+                createSubList(sender, type, 1).then(repairWord => {
                     reply(repairWord);
                 });
-                /*  values = [groupID, 1];
-                    middleWare.createGroupSubList(values).then(repairWord => {
-                        reply(repairWord);
-                    });
-                */
                 return true;
 
             case "!直播订阅列表":
-                values = [groupID, 2];
-                middleWare.createGroupSubList(values).then(repairWord => {
+                createSubList(sender, type, 2).then(repairWord => {
                     reply(repairWord);
                 });
                 return true;
 
             case "!动态订阅列表":
-                values = [groupID, 3];
-                middleWare.createGroupSubList(values).then(repairWord => {
+                createSubList(sender, type, 3).then(repairWord => {
                     reply(repairWord);
                 });
                 return true;
 
             case "!订阅":
-                type = 1;
-                UID = instruct[1];
-                middleWare.subGroup(groupID, type, UID).then(repairWord => {
+                addSub(sender, type, 1, instruct[1]).then(repairWord => {
                     reply(repairWord);
                 })
                 return true;
 
             case "!直播订阅":
-                type = 2;
-                UID = instruct[1];
-                middleWare.subGroup(groupID, type, UID).then(repairWord => {
+                addSub(sender, type, 2, instruct[1]).then(repairWord => {
                     reply(repairWord);
                 })
                 return true;
 
             case "!动态订阅":
-                type = 3;
-                UID = instruct[1];
-                middleWare.subGroup(groupID, type, UID).then(repairWord => {
+                addSub(sender, type, 3, instruct[1]).then(repairWord => {
                     reply(repairWord);
                 })
                 return true;
 
             case "!取消订阅":
-                UID = instruct[1];
-                middleWare.deleteGroupSub(groupID, UID).then(repairWord => {
+                delSub(sender, type, instruct[1]).then(repairWord => {
                     reply(repairWord);
                 })
                 return true;
@@ -75,9 +59,23 @@ exports.checkBili = (bot, message, msg) => {
 }
 
 //生成订阅列表
-function createSubList(sender, type) {
+function createSubList(sender, type, listType) {
     return new Promise((reslove, reject) => {
-        if (type === )
+        if (type === "GroupMessage") {
+            // 群组消息
+            let groupID = sender.group.id;
+            let values = [groupID, listType];
+            createGroupSubList(values).then((res) => {
+                reslove(res);
+            })
+        } else if (type === "FriendMessage") {
+            // 个人消息
+            let personID = sender.id;
+            let values = [personID, listType];
+            createPersonSubList(values).then((res) => {
+                reslove(res);
+            })
+        }
     })
 }
 
@@ -119,8 +117,30 @@ async function createPersonSubList(values) {
     return repairWord;
 }
 
+// 添加订阅
+function addSub(sender, type, UID) {
+    return new Promise((reslove, reject) => {
+        if (type === "GroupMessage") {
+            // 群组消息
+            let groupID = sender.group.id;
+            let values = [groupID, subType, UID];
+            addGroupSub(values).then((repairWord) => {
+                reslove(repairWord);
+            })
+
+        } else if (type === "FriendMessage") {
+            // 个人消息
+            let personID = sender.id;
+            let values = [personID, subType, UID];
+            addPersonSub(values).then((repairWord) => {
+                reslove(repairWord);
+            })
+        }
+    })
+}
+
 //为群组订阅一位UP主
-async function subGroup(groupID, type, UID) {
+async function addGroupSub(groupID, type, UID) {
     // 判断用户输入的UID是不是数字
     if (isNaN(UID))
         return "UID应为数字";
@@ -194,54 +214,8 @@ async function subGroup(groupID, type, UID) {
     return repairWord;
 }
 
-// 删除某个群组对某个UP主的订阅
-async function deleteGroupSub(groupID, UID) {
-    // 判断用户输入的UID是不是数字
-    if (isNaN(UID))
-        return "UID应为数字";
-
-    let repairWord = "";
-    let UPName = "";
-    let values = [UID, groupID];
-    let subNum = 0;
-
-    // 先判断是否订阅
-    await sql.selectGroupOneSub(values).then(rows => {
-        if (rows.length === 0) {
-            repairWord = `该群未订阅此UP主`;
-            throw new Error("STOP");
-        } else {
-            UPName = rows[0].Name;
-            return sql.deleteGroupSub(values);
-        }
-    }).then(() => {
-        // 查找个人关注的数量
-        values = [UID];
-        return sql.selectPersonSubByUP(values);
-    }).then(rows => {
-        // 查找群组关注的数量
-        subNum += rows.length;
-        return sql.selectGroupSubByUP(values);
-    }).then(rows => {
-        subNum += rows.length;
-        if (subNum !== 0) {
-            repairWord = `取消订阅${UPName}成功`;
-            throw new Error("STOP");
-        } else {
-            return sql.deleteUP(values);
-        }
-    }).then(() => {
-        repairWord = `取消订阅${UPName}成功`;
-    }).catch(err => {
-        // 之前throw的"STOP" error会直接跳转到这里
-        if (repairWord === "")
-            repairWord = "未知错误";
-    })
-    return repairWord;
-}
-
 //为个人订阅一位UP主
-async function subPerson(personID, type, UID) {
+async function addPersonSub(personID, type, UID) {
     // 判断用户输入的UID是不是数字
     if (isNaN(UID))
         return "UID应为数字";
@@ -308,6 +282,73 @@ async function subPerson(personID, type, UID) {
             repairWord = `订阅${Name}成功`
         }
     }).catch((err) => {
+        // 之前throw的"STOP" error会直接跳转到这里
+        if (repairWord === "")
+            repairWord = "未知错误";
+    })
+    return repairWord;
+}
+
+// 删除对某个UP主的订阅
+function delSub(sender, type, UID) {
+    return new Promise((reslove, reject) => {
+        if (type === "GroupMessage") {
+            // 群组消息
+            let groupID = sender.group.id;
+            let values = [groupID, UID];
+            deleteGroupSub(values).then((repairWord) => {
+                reslove(repairWord);
+            })
+        } else if (type === "FriendMessage") {
+            // 个人消息
+            let personID = sender.id;
+            let values = [personID, UID];
+            deletePersonSub(values).then((repairWord) => {
+                reslove(repairWord);
+            })
+        }
+    })
+}
+
+// 删除某个群组对某个UP主的订阅
+async function deleteGroupSub(groupID, UID) {
+    // 判断用户输入的UID是不是数字
+    if (isNaN(UID))
+        return "UID应为数字";
+
+    let repairWord = "";
+    let UPName = "";
+    let values = [UID, groupID];
+    let subNum = 0;
+
+    // 先判断是否订阅
+    await sql.selectGroupOneSub(values).then(rows => {
+        if (rows.length === 0) {
+            repairWord = `该群未订阅此UP主`;
+            throw new Error("STOP");
+        } else {
+            UPName = rows[0].Name;
+            return sql.deleteGroupSub(values);
+        }
+    }).then(() => {
+        // 查找个人关注的数量
+        values = [UID];
+        return sql.selectPersonSubByUP(values);
+    }).then(rows => {
+        // 查找群组关注的数量
+        subNum += rows.length;
+        return sql.selectGroupSubByUP(values);
+    }).then(rows => {
+        subNum += rows.length;
+        if (subNum !== 0) {
+            repairWord = `取消订阅${UPName}成功`;
+            throw new Error("STOP");
+        } else {
+            return sql.deleteUP(values);
+        }
+    }).then(() => {
+        repairWord = `取消订阅${UPName}成功`;
+    }).catch(err => {
         // 之前throw的"STOP" error会直接跳转到这里
         if (repairWord === "")
             repairWord = "未知错误";
