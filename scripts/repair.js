@@ -377,3 +377,17 @@ function managePerson(message, sender, messageChain, reply, quoteReply, recall, 
             return;
     }
 }
+
+function manageTodo(sender, reply, msg) {
+    // 使用空格切割字符串
+    let instruct = msg.split(" ", 2);
+    let order = instruct[0].toLowerCase();
+    switch (order) {
+        case "todo": { }
+        case "deltodo": { }
+        case "todolist": { }
+    }
+
+    // 消息来源群组
+    let groupID = sender.group.id;
+}

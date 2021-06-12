@@ -59,6 +59,13 @@ let atWords = `CREATE TABLE IF NOT EXISTS atWords
 let repeatBan = `CREATE TABLE IF NOT EXISTS repeatBan
     (Group_Number INTEGER PRIMARY KEY);`;
 
+// 创建todolist表
+let todos = `CREATE TABLE IF NOT EXISTS todos
+    (todoID INTEGER PRIMARY KEY AUTOINCREMENT,
+    todo_text TEXT NOT NULL,
+    Group_Number TEXT NOT NULL,
+    todo_time INTEGER);`;
+
 // 创建表
 let createTable = (sql) => {
     return query(sql, []);
@@ -70,6 +77,7 @@ createTable(subPerson);
 createTable(keyWords);
 createTable(atWords);
 createTable(repeatBan);
+createTable(todos);
 
 // 关键词模块
 // 给某个群添加关键词
@@ -339,5 +347,30 @@ exports.selectPersonSubByUP = (values) => {
 // 查询某个UP主是否有关注的群组
 exports.selectGroupSubByUP = (values) => {
     let _sql = `select * FROM subGroup WHERE UID=?;`;
+    return query(_sql, values);
+}
+
+// todo模块
+// 添加todo
+exports.addTodo = (values) => {
+    const _sql = `INSERT INTO todos (todo_text, Group_Number, todo_time) VALUES (?,?,?)`;
+    return query(_sql, values);
+}
+
+// 查询todo
+exports.selectTodo = (values) => {
+    const _sql = `SELECT * FROM todos WHERE Group_Number=? ORDER BY todo_time;`;
+    return query(_sql, values);
+}
+
+// 分页查询todo
+exports.selectTodo = (values) => {
+    const _sql = `SELECT * FROM todos WHERE Group_Number=? ORDER BY todo_time LIMIT ?, ?;`;
+    return query(_sql, values);
+}
+
+// 完成todo
+exports.deleteTodo = (values) => {
+    const _sql = `DELETE FROM todos WHERE todoID=?;`;
     return query(_sql, values);
 }
