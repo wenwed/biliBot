@@ -35,6 +35,8 @@ exports.repairGroup = async (bot, message, sender, messageChain, reply, quoteRep
         return;
     }
 
+    manageTodo(sender, reply, msg);
+
     let target = 0;
     messageChain.forEach(chain => {
         if (chain.type === 'At') {
@@ -136,6 +138,7 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
         case "!help":
             repairWord = `!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表
 !动态订阅 uid\n!动态订阅列表\n!取消订阅 uid
+todo 内容\ntodolist\ndeltodo id
 需要管理员权限：\n!添加精确关键词 关键词 回复词\n!添加模糊关键词 关键词 回复词\n!删除关键词 关键词
 !精确关键词列表\n!模糊关键词列表\n!开启复读\n!关闭复读
 当前版本：3.0.0\ngithub地址：https://github.com/wenwed/biliBot`;
@@ -382,12 +385,27 @@ function manageTodo(sender, reply, msg) {
     // 使用空格切割字符串
     let instruct = msg.split(" ", 2);
     let order = instruct[0].toLowerCase();
-    switch (order) {
-        case "todo": { }
-        case "deltodo": { }
-        case "todolist": { }
-    }
-
     // 消息来源群组
     let groupID = sender.group.id;
+
+    switch (order) {
+        case "todo": {
+            middleWare.createTodo(instruct[1], groupID).then((repairWord) => {
+                reply(repairWord);
+            })
+            return;
+        }
+        case "deltodo": {
+            middleWare.completeTodo(instruct[1]).then((repairWord) => {
+                reply(repairWord);
+            })
+            return;
+        }
+        case "todolist": {
+            middleWare.selectGroupTodo(groupID).then((repairWord) => {
+                reply(repairWord);
+            })
+            return;
+        }
+    }
 }

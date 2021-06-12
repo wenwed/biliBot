@@ -364,7 +364,7 @@ exports.selectTodo = (values) => {
 }
 
 // 分页查询todo
-exports.selectTodo = (values) => {
+exports.selectLimitTodo = (values) => {
     const _sql = `SELECT * FROM todos WHERE Group_Number=? ORDER BY todo_time LIMIT ?, ?;`;
     return query(_sql, values);
 }

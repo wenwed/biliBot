@@ -400,3 +400,41 @@ exports.searchBiliMedal = async (UID) => {
 }
 
 // 添加todo
+exports.createTodo = async (todoText, groupID) => {
+    if (!todoText) {
+        return "请输入todo内容";
+    }
+    let repairWord = "";
+    let values = [todoText, groupID, new Date().getTime()];
+    await sql.addTodo(values).then((res) => {
+        repairWord = `添加todo：${todoText} 成功`;
+    })
+    return repairWord;
+}
+
+// 获取todo列表
+exports.selectGroupTodo = async (groupID) => {
+    let values = [groupID];
+    let repairWord = "";
+    await sql.selectTodo(values).then((res) => {
+        repairWord = `当前有${res.length}个todo事项`;
+        for (let i = 0; i < res.length; i++) {
+            repairWord = `${repairWord}\n${res[i].todoID} ${res[i].todo_text}`;
+        }
+    })
+    return repairWord;
+}
+
+// 完成todo
+exports.completeTodo = async (ID) => {
+    // 判断用户输入的UID是不是数字
+    if (isNaN(ID))
+        return "todo的id应为数字";
+
+    let values = [ID];
+    let repairWord = "";
+    await sql.deleteTodo(values).then((res) => {
+        repairWord = `已完成todo事项,id：${ID}`;
+    })
+    return repairWord;
+}
