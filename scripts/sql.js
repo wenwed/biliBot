@@ -357,6 +357,12 @@ exports.addTodo = (values) => {
     return query(_sql, values);
 }
 
+// 查询某个todo
+exports.selectOneTodo = (values) => {
+    const _sql = `SELECT * FROM todos WHERE todoID=?;`;
+    return query(_sql, values)
+}
+
 // 查询todo
 exports.selectTodo = (values) => {
     const _sql = `SELECT * FROM todos WHERE Group_Number=? ORDER BY todo_time;`;
@@ -372,5 +378,11 @@ exports.selectLimitTodo = (values) => {
 // 完成todo
 exports.deleteTodo = (values) => {
     const _sql = `DELETE FROM todos WHERE todoID=?;`;
+    return query(_sql, values);
+}
+
+// 完成所有的todo
+exports.deleteAllTodo = (values) => {
+    const _sql = `DELETE FROM todos WHERE Group_Number=?;`;
     return query(_sql, values);
 }

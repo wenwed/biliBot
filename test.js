@@ -25,6 +25,15 @@ const middleWare = require("./scripts/middleWare.js");
 //     console.log(res);
 // })
 
-middleWare.completeTodo(4).then((res) => {
-    console.log(res);
-})
+// middleWare.completeTodo(4).then((res) => {
+//     console.log(res);
+// })
+
+// let msg = "todo ceshi ceshi";
+// let instruct = msg.split(" ", 2);
+// console.log(msg.substring(instruct[0].length + 1));
+
+// let values = [2]
+// sql.selectOneTodo(values).then((res) => {
+//     console.log(res);
+// })

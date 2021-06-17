@@ -426,15 +426,36 @@ exports.selectGroupTodo = async (groupID) => {
 }
 
 // 完成todo
-exports.completeTodo = async (ID) => {
+exports.completeTodo = async (groupID, ID) => {
     // 判断用户输入的UID是不是数字
     if (isNaN(ID))
         return "todo的id应为数字";
 
     let values = [ID];
+    let repairWord = "未知错误";
+    await sql.selectOneTodo(values).then((res) => {
+        if (res.length === 0) {
+            repairWord = `没有此项todo或已完成`;
+            throw new Error("STOP");
+        } else if (res[0].Group_Number != groupID) {
+            repairWord = `此项todo不属于该群组`;
+            throw new Error("STOP");
+        } else {
+            return sql.deleteTodo(values)
+        }
+    }).then((result) => {
+        repairWord = `已完成todo事项：${res[0].todo_text}`;
+    }).catch((err) => {
+    })
+    return repairWord;
+}
+
+// 完成某个群组所有的todo
+exports.completeAllTodo = async (groupID) => {
+    let values = [groupID];
     let repairWord = "";
-    await sql.deleteTodo(values).then((res) => {
-        repairWord = `已完成todo事项,id：${ID}`;
+    await sql.deleteAllTodo(values).then((res) => {
+        repairWord = `已完成该群组所有的todo事项`;
     })
     return repairWord;
 }

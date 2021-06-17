@@ -138,7 +138,7 @@ function manageGroup(message, sender, messageChain, reply, quoteReply, recall, m
         case "!help":
             repairWord = `!订阅 uid\n!订阅列表\n!直播订阅 uid\n!直播订阅列表
 !动态订阅 uid\n!动态订阅列表\n!取消订阅 uid
-todo 内容\ntodolist\ndeltodo id
+todo 内容\ntodolist\ndeltodo id\ndelalltodo
 需要管理员权限：\n!添加精确关键词 关键词 回复词\n!添加模糊关键词 关键词 回复词\n!删除关键词 关键词
 !精确关键词列表\n!模糊关键词列表\n!开启复读\n!关闭复读
 当前版本：3.0.0\ngithub地址：https://github.com/wenwed/biliBot`;
@@ -226,8 +226,7 @@ todo 内容\ntodolist\ndeltodo id
             } else if (instruct.lenth === 1) {
                 reply("请输入关键词");
                 return;
-            }
-            else {
+            } else {
                 // 判断前两个字符串加空格的长度，方便截取第三段
                 length = instruct[0].length + instruct[1].length + 2;
                 if (msg.substr(length) === "") {
@@ -247,8 +246,7 @@ todo 内容\ntodolist\ndeltodo id
             } else if (instruct.lenth === 1) {
                 reply("请输入关键词");
                 return;
-            }
-            else {
+            } else {
                 // 判断前两个字符串加空格的长度，方便截取第三段
                 length = instruct[0].length + instruct[1].length + 2;
                 if (msg.substr(length) === "") {
@@ -387,22 +385,33 @@ function manageTodo(sender, reply, msg) {
     let order = instruct[0].toLowerCase();
     // 消息来源群组
     let groupID = sender.group.id;
+    let permission = sender.permission;
 
     switch (order) {
         case "todo": {
-            middleWare.createTodo(instruct[1], groupID).then((repairWord) => {
+            middleWare.createTodo(msg.substring(instruct[0].length + 1), groupID).then((repairWord) => {
                 reply(repairWord);
             })
             return;
         }
         case "deltodo": {
-            middleWare.completeTodo(instruct[1]).then((repairWord) => {
+            middleWare.completeTodo(groupID, instruct[1]).then((repairWord) => {
                 reply(repairWord);
             })
             return;
         }
         case "todolist": {
             middleWare.selectGroupTodo(groupID).then((repairWord) => {
+                reply(repairWord);
+            })
+            return;
+        }
+        case "delalltodo": {
+            if (permission !== "ADMINISTRATOR" && permission !== "OWNER") {
+                reply("权限等级不足");
+                return;
+            }
+            middleWare.completeAllTodo(groupID).then((repairWord) => {
                 reply(repairWord);
             })
             return;
